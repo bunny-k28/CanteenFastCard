@@ -1,0 +1,128 @@
+<!-- id registration web page html code -->
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+    <link rel="shortcut icon" href="../../static/images/favicon.ico" type="image/x-icon">
+
+    <title>KIIT.KP Canteen-Register</title>
+</head>
+
+<body>
+
+    <nav id="navbar-example2" class="navbar navbar-dark bg-light px-3">
+        <a class="navbar-brand" href="#">
+            <div class="row g-3">
+                <div class="col-auto">
+                    <img src="../../static/images/favicon.ico" width="50" height="50"
+                        class="d-inline-block align-text-top">
+                </div>
+                <div class="col-auto">
+                    <h3>
+                        <label>KIIT Canteen</label>
+                    </h3>
+                </div>
+            </div>
+        </a>
+
+        <ul class="nav nav-pills">
+            <li class="nav-item">
+                <a class="btn btn-outline-primary" href="/home">
+                    <h4>Home</h4>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    
+
+    <br>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/alert.css') }}">
+    <h2>
+        <pre class="alert-message">{{ alert_message }}</pre>
+    </h2>
+
+    <br>
+
+    <div class="container home">
+        <div class="container">
+
+            <form method="post">
+                <div class="mb-3 mt-5">
+
+                    <br>
+
+                    <label class="text-body">
+                        <b>
+                            <h5>Student Name</h5>
+                        </b>
+                    </label>
+                    <input type="text" class="form-control" 
+                    name='std_name' placeholder="Your Full Name" required>
+                </div>
+
+                <div class="mb-3 mt-5">
+                    <label class="text-body">
+                        <b>
+                            <h5>Personal Email-ID</h5>
+                        </b>
+                    </label>
+                    <input type="email" class="form-control" name='email' 
+                    placeholder="xyz@example.com" aria-label="Email ID" 
+                    aria-describedby="addon-wrapping" required>
+                </div>
+
+                <div class="mb-3 mt-5">
+                    <label class="text-body">
+                        <b>
+                            <h5>Canteen Account Details</h5>
+                        </b>
+                    </label>
+
+                    <div class="row g-3">
+                        <div class="col-3">
+                            <input type="number" class="form-control" name='std_roll_no'
+                                placeholder="your college ID/Roll No." aria-label="Student ID"
+                                aria-describedby="addon-wrapping" required>
+                        </div>
+
+                        <div class="col-3">
+                            <input type="password" class="form-control" name='pin_code'
+                                placeholder="Create new Pin-code (min 4 charecters)" 
+                                aria-label="Password" aria-describedby="addon-wrapping" required>
+                        </div>
+
+                        <div class="col-3">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">₹</span>
+                                <input type="number" class="form-control" name="initial_amount"
+                                    placeholder="Enter Initial/Opening Amount" required>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg mb-3">Register</button><br>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+        crossorigin="anonymous"></script>
+
+</body>
+
+
+</html>

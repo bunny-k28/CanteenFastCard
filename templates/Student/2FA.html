@@ -1,0 +1,55 @@
+<!-- the home/main web page html code -->
+
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+	<link rel="shortcut icon" href="../../static/images/favicon.ico" type="image/x-icon">
+
+	<title>KIIT.KP Canteen-2FA</title>
+</head>
+
+<body>
+
+    <br><br><br><br><br><br><br><br>
+
+    <h2 align="center">
+        <pre>{{ validity }}</pre>
+    </h2>
+
+    <br><br>
+
+    <div id="container">
+
+        <form class="row g-3", method="post">
+
+            <div class="col-4">
+                <label></label>
+            </div>
+        
+            <div class="col-auto">
+                <input type="text" class="form-control" 
+                name="std_roll_no_pcr" placeholder="Your college Roll No." required>
+            </div>
+        
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary mb-3">Confirm identity</button>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+    crossorigin="anonymous"></script>
+
+</body>
+
+</html>

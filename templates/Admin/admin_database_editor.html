@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+    <style>
+        .vertical {
+            border-left: 3px solid black;
+            height: 180px;
+            position: absolute;
+            left: 33%;
+        }
+    </style>
+
+    <!-- <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" /> -->
+    <!-- <script defer src="https://pyscript.net/alpha/pyscript.js"></script> -->
+
+    <link rel="icon" href="../../static/images/favicon.ico" type="image/x-icon">
+
+    <title>KIIT.KP Canteen-Admin Dashboard</title>
+</head>
+
+<body>
+
+    <nav id="navbar-example2" class="navbar navbar-light bg-light px-3">
+        <a class="navbar-brand" href="/home">
+            <div class="row g-3">
+
+                <div class="col-auto">
+                    <img src="../../static/images/favicon.ico" width="50" height="50"
+                        class="d-inline-block align-text-top">
+                </div>
+
+                <div class="col-auto">
+                    <h3>
+                        <label>KIIT Canteen</label>
+                    </h3>
+                </div>
+
+            </div>
+        </a>
+
+        <div class="btn-group">
+            <a type="button" class="btn btn-outline-primary" href="/admin/dashboard">
+                <h4>
+                    BACK
+                </h4>
+            </a>
+
+            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="visually-hidden">Toggle Dropdown</span>
+            </button>
+
+            <ul class="dropdown-menu">
+
+                <li>
+                    <a class="dropdown-item" href="/admin/developer/database/database_file/view/student">
+                        View DB
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+
+    </nav>
+
+    <br><br>
+
+    <h3 align="center">
+        <pre>{{ page_error }}</pre>
+    </h3>
+
+    <br>
+
+    <div id="container">
+
+        <form class="row g-3" , method="post">
+
+            <div class="col-2">
+                <label></label>
+            </div>
+
+            <div class="col-7">
+                <input type="text" class="form-control" list="datalistOptions" name="query"
+                    placeholder="Database Management Query" required>
+
+                <datalist id="datalistOptions">
+                    <option value="DELETE FROM <table> WHERE <primary key>=<value>">
+                    <option value="UPDATE <table> SET <col>=<value> WHERE <primary key>=<value>">
+                    <option value="SELECT * FROM <table>">
+                    <option value="SELECT * FROM <table> WHERE <primary key>=<value>">
+                    <option value="SELECT <key/col_name> FROM <table> WHERE <primary key>=<value>">
+                    <option value="SELECT name FROM sqlite_master WHERE type = 'table'">
+                </datalist>
+            </div>
+
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary mb-3">Execute Query</button>
+            </div>
+
+        </form>
+
+    </div>
+
+    <br>
+
+    <div class="container">
+        
+        <div data-bs-root-margin="0px 0px -40%" data-bs-smooth-scroll="true"
+        class="scroll-example bg-light p-3 rounded-2" tabindex="0">
+        
+            <div class="card">
+                <br>
+
+                <h2 align="center">
+                    ⬇️ Query Result ⬇️
+                </h2>
+
+                <hr>
+
+                <h3 class="my-3 mx-3">
+                    {% for data in long_data %}
+                        <pre align="center">{{long_data.index(data) + 1}}. {{data}}</pre>
+                    {% endfor %}
+
+                    <pre align="center">{{query_result}}</pre>
+                </h3>
+            </div>
+        </div>
+    </div>
+
+    <br>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>

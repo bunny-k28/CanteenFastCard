@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+    <!-- <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" /> -->
+    <!-- <script defer src="https://pyscript.net/alpha/pyscript.js"></script> -->
+
+    <link rel="shortcut icon" href="../../static/images/favicon.ico" type="image/x-icon">
+
+    <title>KIIT.KP Canteen-Pin Reset</title>
+</head>
+
+<body>
+    <nav id="navbar-example2" class="navbar navbar-light bg-light px-3">
+		<a class="navbar-brand" href="/home">
+			<div class="row g-3">
+				<div class="col-auto">
+					<img src="../../static/images/favicon.ico" width="50" height="50"
+						class="d-inline-block align-text-top">
+				</div>
+				<div class="col-auto">
+					<h3>
+						<label>KIIT Canteen</label>
+					</h3>
+				</div>
+			</div>
+		</a>
+
+		<ul class="nav nav-pills">
+			<li class="nav-item">
+				<a class="btn btn-outline-primary" href="/admin/dashboard">
+					<h4>Back</h4>
+				</a>
+			</li>
+		</ul>
+	</nav>
+
+    <br>
+
+    <h2 align="center">
+        <font color="#3096ee">
+            <pre>{{ web_page_msg }}</pre>
+        </font>
+    </h2>
+
+    <h2 align="center">
+        <font color="red">
+            <pre>{{ error }}</pre>
+        </font>
+    </h2>
+
+    <br>
+
+    <div class="container">
+
+        <link rel="stylesheet" 
+        href="{{ url_for('static', filename='css/text_coloring.css') }}">
+
+        <div class="card log-scrapping">
+            <div class="card-header">
+                <h4>
+                    For: Log Scrapping
+                </h4>
+            </div>
+
+            <div class="card-body">
+
+                <h2 class="card-title check-title">
+                    Read log(s) here
+                </h2>
+
+                <p class="card-text">
+                    Just verify the <b>USID/Log Name</b> and click <b>View Log</b> button.
+                </p>
+
+                <div class="row g-3">
+
+                    <div class="form-group">
+                        <div class="row g-3">
+                            
+                            <div class="col-auto">
+                                <label>
+                                    <h4>
+                                        For Example:- 
+                                    </h4>
+                                </label>
+                            </div>
+ 
+                            <div class="col-auto">
+                                <span class="input-group-text" id="basic-addon1">
+                                    <div class="col-auto">
+                                        <span class="input-group-text" id="basic-addon1">
+                                            1
+                                        </span>
+                                    </div>
+                                    <div class="col-auto">
+                                        <input  type="search" class="form-control" 
+                                        name="log_search_name" placeholder="MbsB4PmPovFPtyLE" disabled>
+                                    </div>
+
+                                    <div class="col-auto">
+                                        <button type="submit" target="_blank" 
+                                        class="btn btn-outline-info" disabled>View Log</button>
+                                    </div>
+                                </span>
+                            </div>
+                    
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <br>
+
+        <div class="card log-list">
+            <div class="card-header">
+                <h4>
+                    Student Logs
+                </h4>
+            </div>
+
+            <div class="card-body">
+                {% for log_name in logs %}
+                    <form class="form-group" method="post">
+                        <div class="row g-3">
+                            <div class="col-auto">
+                                <div class="row g-1">
+
+                                    <div class="col-auto">
+                                        <span class="input-group-text" id="basic-addon1">
+                                            {{ logs.index(log_name) + 1 }}
+                                        </span>
+                                    </div>
+
+                                    <div class="col-auto">
+                                        <input type="text" class="form-control" 
+                                        name="log_name" value="{{ log_name }}">
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-outline-info">
+                                    View Log
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <hr>
+                {% endfor %}
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+    crossorigin="anonymous"></script>
+
+</body>
+
+</html>
