@@ -643,12 +643,8 @@ def admin_pswd_reset_form():
 @http.route('/admin/dashboard')
 def admin_dashboard():
     global admin_login_status
-    global _db, _sql
     
     if admin_login_status is True:
-        try: close_db(_db, _sql)
-        except Exception: pass
-
         return render_template('Admin/admin_dashboard.html',
                                web_page_msg=greeting())
     
