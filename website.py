@@ -649,7 +649,8 @@ def admin_dashboard():
         try: close_db(_db, _sql)
         except Exception: pass
 
-        return render_template('Admin/admin_dashboard.html')
+        return render_template('Admin/admin_dashboard.html',
+                               web_page_msg=greeting())
     
     else: return redirect(url_for('admin_login'))
 
