@@ -1,4 +1,7 @@
 Database/logs
+Database/kiit_kp_canteen.db
+Database/log_file_names.txt
+Database/preparing_errors.txt
 Database/website_info.env
 Testing
 .gitignore
