@@ -37,9 +37,9 @@
 
 #### There are 2 ways to <b>reset</b> your <b><i>account password/pin-code</i></b>. One by <b><i>reset link</i></b>, one by <i><b>posting request</i></b>.
 
-#### 3.1. On the <b>login page</b>, you'll see a <b><i>reset link in <font color="red">red</font></i></b>. The link will take you to the <b>reset password/pin-code form</b>. You've to fill-up the <b>required fields</b> and that will reset your <b><i>password/pin-code</i></b>.
+#### 3.1. On the <b>login page</b>, you'll see a <b><i><u>reset link in red</u></i></b>. The link will take you to the <b>reset password/pin-code form</b>. You've to fill-up the <b>required fields</b> and that will reset your <b><i>password/pin-code</i></b>.
 
-#### 3.2. Another way is by <b>posting</b> a password/pin-code <b>reset request</b> to the admin(s) on the <u><b><i><a href="https://discord.gg/QqkD5n6Z/c2wEPdhD5J">discord server channel</a></i></b></u> or <b>posting a reset request</b> through this <b>E-mail</b>:- <u><b><i>bot.kiit.kp.canteen@gmail.com</i></b></u>. Just send your:-
+#### 3.2. Another way is by <b>posting</b> a password/pin-code <b>reset request</b> to the admin(s) on the <u><b><i><a href="https://discord.gg/QqkD5n6Z/c2wEPdhD5J" target="_blank">discord server channel</a></i></b></u> or <b>posting a reset request</b> through this <b>E-mail</b>:- <u><b><i>bot.kiit.kp.canteen@gmail.com</i></b></u>. Just send your:-
     1. Roll Number
     2. USID
     3. New Password/Pin-code
