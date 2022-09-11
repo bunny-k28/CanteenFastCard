@@ -15,6 +15,6 @@
 
 ## How to use
 
-### Login
+### Register
 
-#### 1.
+#### 1. There are 2 ways to register your ID card. One automatic, one manual.
