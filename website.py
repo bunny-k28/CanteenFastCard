@@ -181,11 +181,11 @@ def manual_id_registration_form():
     init_amount = request.form['initial_amount']
     
     if len(id_pin_code) < 0:
-        return render_template('Student/auto_id_registration.html', 
+        return render_template('Student/manual_id_registration.html', 
                                alert_message='[ Pin Code too short! ]')
     
     elif int(init_amount) < 30:
-        return render_template('Student/auto_id_registration.html', 
+        return render_template('Student/manual_id_registration.html', 
                                 alert_message='[ Minimum amount required is Rs.30]')
     
     else:
@@ -201,7 +201,7 @@ def manual_id_registration_form():
             global website_error
             
             website_error = ['register', E]
-            return render_template('Student/auto_id_registration.html', 
+            return render_template('Student/manual_id_registration.html', 
                                 alert_message='[ Unable to register this ID ]')
 
 
