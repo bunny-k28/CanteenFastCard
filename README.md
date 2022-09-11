@@ -50,10 +50,21 @@
 #### [ Once you've logged-in, you'll be in your CanteenFastCard dashboard from where you can pay for your items, check your account balance, put more amount into your account and you can also view/request your transaction(s) log file (or receipt). ]
 
 ### 1. Payment
-
+![](static/images/pay.jpg)
+#### As you can see in the above image, you just have to enter the <b>total amount</b> of the bought item(S) and click the `Pay Amount` button.
+<br>
 
 ### 2. Update
+![](static/images/update.jpg)
+#### As you can see in the above image, you just have to enter the amount you want to update into your account and click the `Update Balance` button.
+<br>
 
 ### 3. Check
+![](static/images/check.jpg)
+#### As you can see in the above image, you just have to click the `Check Balance` button and you'll be able to check your <i><u>current account balance</u></i>.
+<br>
 
 ### 4. Log
+![](static/images/log.jpg)
+#### As you can see in the above image, there are 2 buttons. One, the `View Transition` button to view the <i><u>transaction history/log</u></i> in the browser. Second, the `Request File` button, this request button will <i><u>mail you a softcopy</u></i>  of your transaction history/log.
+<br>
