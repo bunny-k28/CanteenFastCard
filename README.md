@@ -21,7 +21,7 @@
 
 #### 2. In auto mode, when you'll scan your ID card or put your credencials manually, the website will automatically open the  registration form if the ID is not registared
 
-#### 3. In the manual mode, you have to manually register yourself by clicking on the register button present in the top right corner.
+#### 3. In the manual mode, you have to manually register yourself by clicking on the `Register` button present in <u>the top right corner</u>.
 
 
 ### Login
