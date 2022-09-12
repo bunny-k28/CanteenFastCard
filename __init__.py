@@ -290,9 +290,9 @@ def send_mail(db: sqlite3.Connection, _id: int, mail_type: str, args=int):
     if mail_type == 'log':
         subject = "KIIT Polytechnic Canteen Transaction Log"
 
-        body = """This mail contains information about your canteen transaction through card.
+        body = f"""This mail contains information about your canteen transaction through card.
 Please go through the attached file and check the details.
-If you have any query(ies), please reply back your query(ies) to the following email address: bot.kpcanteen889@gmail.com
+If you have any query(ies), please reply back your query(ies) to the following email address: {HOST_SSID}
 
 [NOTE: Instead of going to canteen and asking for transaction Log file, 
 You can reply to this mail with your Log file request. You'll receive a mail with the transaction Log file within 24 Hours.]
@@ -326,7 +326,7 @@ KIIT Polytechnic Canteen
 
         body = f"""This mail contains information about your canteen registration.
 Please go through the details.
-If you have any query(ies), please reply back your query(ies) to the following email address: bot.kpcanteen889@gmail.com
+If you have any query(ies), please reply back your query(ies) to the following email address: {HOST_SSID}
 
 ===============================================================
 
@@ -369,7 +369,7 @@ KIIT KP Canteen
 
         body = f"""This mail contains information about your canteen balance.
 Please go through the details.
-If you have any query(ies), please reply back your query(ies) to the following email address: bot.kpcanteen889@gmail.com
+If you have any query(ies), please reply back your query(ies) to the following email address: {HOST_SSID}
 
 ===============================================================
 
@@ -380,7 +380,7 @@ Registered Email: {std_email}
 This mail is sent to imform you that, your canteen balance is low.
 You have Rs.{args} left in your canteen account.
 
-If you want your transaction log file, please email your usid to the following email address: bot.kpcanteen889@gmail.com.
+If you want your transaction log file, please email your usid to the following email address: {HOST_SSID}.
 Your Log file will be sent to you within 24 Hours.
 
 [NOTE: If you want your transaction log file ASAP, you can scan your id card at the canteen.]
@@ -394,7 +394,7 @@ KIIT KP Canteen
 
         body = f"""This mail contains information about your canteen balance.
 Please go through the details.
-If you have any query(ies), please reply back your query(ies) to the following email address: bot.kpcanteen889@gmail.com
+If you have any query(ies), please reply back your query(ies) to the following email address: {HOST_SSID}
 
 ===============================================================
 
@@ -405,7 +405,7 @@ Registered Email: {std_email}
 This mail is sent to imform you that, Rs. {args} have been debited from your canteen account.
 If you're not familiar with the transaction report this to any of the the canteen employee.
 
-If you want your transaction log file, please email your usid to the following email address: bot.kpcanteen889@gmail.com.
+If you want your transaction log file, please email your usid to the following email address: {HOST_SSID}.
 Your Log file will be sent to you within 24 Hours.
 
 [NOTE: If you want your transaction log file ASAP, you can scan your id card at the canteen.]
