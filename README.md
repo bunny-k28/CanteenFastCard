@@ -13,6 +13,24 @@
 #### 5. You can <b><i>view/check</i></b> their <b><i>current/remaining balance/amount</i></b> of their account by a simple click.
 
 
+## <li>Preparing the Dir</li>
+
+### 1. Before you start running the website or `website.py` file, you've to prepare your dir with some files and folders.
+
+### 2. To do so, you'll find a `prepare_env.py` file in the directory.
+
+### 3. Open your <b><i>CMD/PowerShell/Terminal</i></b> inside the project directory and type ```py .\prepare_env.py```. After the program is running in your terminal, enter ```dir, libs```
+
+### 4. After the program has finished preparing your directory, you have to make some <i><u>modifications</u></i> in the `website_info.env`.
+    • Env Vars
+        1. HOST_KEY -> app password of service Email account
+        2. HOST_SSID -> service Email account, for sending emails and 2FA codes
+        3. MASTER_2FA_EMAIL -> a master email address for admin access work (like:- shutting down server, etc)
+
+### 5. After all these operations, your program is ready to run. Just open your <b><i>CMD/PowerShell/Terminal</i></b> inside the project directory and type ```py .\website.py```.
+![](static/images/terminal.jpg)
+<br>
+
 ## <li>Getting Started</li>
 
 ### 1. Register
