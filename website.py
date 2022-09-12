@@ -744,7 +744,8 @@ def database_editor():
                 final_data += [d_val]
             
             return render_template('Admin/admin_database_editor.html',
-                                   query_result=final_data)
+                                   query_result=final_data,
+                                   long_data=[])
             
         else:
             final_data = {}
@@ -763,16 +764,32 @@ def database_editor():
         _db = sqlite3.connect('Database/kiit_kp_canteen.db')
         _sql = _db.cursor()
 
+        try: roll_no = int(query[-1])
+        except Exception: roll_no = int(query[-1].split('=')[-1])
+
         try:
             _sql.execute(query)
+            _db.commit()
+
+            _sql.execute(f"DELETE FROM student_account WHERE id={roll_no}")
             _db.commit()
             
             _sql.close()
             _db.close()
+            
+            std_uid = get_student_details(_db, int(roll_no), 'usid')
+            
+            try: 
+                os.remove(f'Database/logs/{std_uid}')
+                return render_template('Admin/admin_database_editor.html',
+                        query_result='Query successfully executed. Data deleted from database AWA Log Dir.')
 
-            return render_template('Admin/admin_database_editor.html',
-                                   query_result='Query successfully executed. Data deleted from the database.')
-        
+
+            except Exception as E:
+                website_error = ['database_editor deleted section', E]
+                return render_template('Admin/admin_database_editor.html',
+                        query_result='Query successfully executed. Data deleted from the database only.')
+
         except Exception as E:
             website_error = ['database_editor web method', E]
             return render_template('Admin/admin_database_editor.html', 
