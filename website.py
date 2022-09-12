@@ -770,29 +770,42 @@ def database_editor():
         try:
             _sql.execute(query)
             _db.commit()
-
-            _sql.execute(f"DELETE FROM student_account WHERE id={roll_no}")
-            _db.commit()
             
+            if query_keywords[2] == 'student_info':
+                try:
+                    _sql.execute(f"DELETE FROM student_account WHERE id={roll_no}")
+                    _db.commit()
+                
+                except Exception: pass
+
+            elif query_keywords[2] == 'student_account':
+                try:
+                    _sql.execute(f"DELETE FROM student_info WHERE id={roll_no}")
+                    _db.commit()
+
+                except Exception: pass
+
+            std_uid = get_student_details(_db, int(roll_no), 'usid')
+
             _sql.close()
             _db.close()
-            
-            std_uid = get_student_details(_db, int(roll_no), 'usid')
-            
-            try: 
-                os.remove(f'Database/logs/{std_uid}')
-                return render_template('Admin/admin_database_editor.html',
-                        query_result='Query successfully executed. Data deleted from database AWA Log Dir.')
 
+            try: 
+                os.remove(f'Database/logs/{std_uid}.txt')
+                return render_template('Admin/admin_database_editor.html',
+                        long_data=[],
+                        query_result='Query successfully executed. Data deleted from database AWA Log Dir.')
 
             except Exception as E:
                 website_error = ['database_editor deleted section', E]
                 return render_template('Admin/admin_database_editor.html',
+                        long_data=[],
                         query_result='Query successfully executed. Data deleted from the database only.')
 
         except Exception as E:
             website_error = ['database_editor web method', E]
-            return render_template('Admin/admin_database_editor.html', 
+            return render_template('Admin/admin_database_editor.html',
+                                   long_data=[], 
                                    page_error='[ Unable to execute the query. ]')
 
     elif str(query_keywords[0]) == 'UPDATE':
