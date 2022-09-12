@@ -764,43 +764,16 @@ def database_editor():
         _db = sqlite3.connect('Database/kiit_kp_canteen.db')
         _sql = _db.cursor()
 
-        try: roll_no = int(query[-1])
-        except Exception: roll_no = int(query[-1].split('=')[-1])
-
         try:
             _sql.execute(query)
             _db.commit()
             
-            if query_keywords[2] == 'student_info':
-                try:
-                    _sql.execute(f"DELETE FROM student_account WHERE id={roll_no}")
-                    _db.commit()
-                
-                except Exception: pass
-
-            elif query_keywords[2] == 'student_account':
-                try:
-                    _sql.execute(f"DELETE FROM student_info WHERE id={roll_no}")
-                    _db.commit()
-
-                except Exception: pass
-
-            std_uid = get_student_details(_db, int(roll_no), 'usid')
-
             _sql.close()
             _db.close()
 
-            try: 
-                os.remove(f'Database/logs/{std_uid}.txt')
-                return render_template('Admin/admin_database_editor.html',
-                        long_data=[],
-                        query_result='Query successfully executed. Data deleted from database AWA Log Dir.')
-
-            except Exception as E:
-                website_error = ['database_editor deleted section', E]
-                return render_template('Admin/admin_database_editor.html',
-                        long_data=[],
-                        query_result='Query successfully executed. Data deleted from the database only.')
+            return render_template('Admin/admin_database_editor.html',
+                    long_data=[],
+                    query_result='Query\command successfully executed.')
 
         except Exception as E:
             website_error = ['database_editor web method', E]
