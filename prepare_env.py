@@ -3,7 +3,8 @@ from os import system as cle
 
 
 def files():
-    files_and_dir = ['Database/logs', 
+    files_and_dir = ['static/auth',
+                     'Database/logs', 
                      'Database/kiit_kp_canteen.db',  
                      'Database/log_file_names.txt', 
                      'Database/preparing_errors.txt', 

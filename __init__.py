@@ -1,9 +1,12 @@
 import os
+import pyotp
+import qrcode
 import string
 import random
 import pandas
 import sqlite3
 import datetime
+import PIL
 
 try: import smtplib, ssl
 except ImportError: os.system('pip install smtplib, ssl')
@@ -77,6 +80,13 @@ def create_id(id_len: int=16, include_puntuations: bool=False):
             break
     
     return uid
+
+
+def google_authentication(OTP: pyotp.TOTP, userID: str):
+    auth_det = OTP.provisioning_uri(name=f'{userID}', issuer_name=f'CanteenFastCard')
+    auth_qr = qrcode.make(auth_det)
+
+    auth_qr.save(f'static/auth/{userID}.jpg')
 
 
 def create_2FA_code(code_len: int=6, code_type: str='numeric'):

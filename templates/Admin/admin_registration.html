@@ -35,7 +35,7 @@
 		<ul class="nav nav-pills">
 			<li class="nav-item">
 				<a class="btn btn-outline-primary" href="/admin/login">
-					<h4>Login</h4>
+					<h4>Back</h4>
 				</a>
 			</li>
 		</ul>
@@ -130,6 +130,18 @@
             </div>
         </div>
 
+    </div>
+
+    <br><br>
+
+    <div class="container">
+        {% if next_bool %}
+            <h1 align="center">
+                <a class="btn btn-primary" href="/admin/login/authentication">
+                    NEXT ➡️
+                </a>
+            </h1>
+        {% endif %}
     </div>
 
 </body>

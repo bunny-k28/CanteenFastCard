@@ -3,6 +3,7 @@ CanteenFastCard Website backend program
 """
 
 import os
+import pyotp
 import pandas
 import sqlite3
 
@@ -45,7 +46,7 @@ student_login = bool(False)
 website_error = list()
 std_log_details = str()
 
-admin_2FA_code = str()
+admin_2FA_code = pyotp.TOTP
 admin_ssid = str()
 admin_login_status = bool(False)
 
@@ -461,7 +462,7 @@ def admin_login():
 @http.route('/admin/login', methods=['POST'])
 def admin_login_form():
     global website_error
-    global admin_2FA_code, admin_login_status
+    global admin_login_status
     
     ssid = str(request.form['ssid'])
     pswd = str(request.form['pswd'])
@@ -474,21 +475,12 @@ def admin_login_form():
         login_details = sql.fetchone()
         
         PSWD = str(login_details[0])
-        EMAIL = str(login_details[1])
+        # EMAIL = str(login_details[1])
         
         if pswd == PSWD:
-            admin_2FA_code = create_2FA_code()
-
-            try:
-                send_2FA_2_admin(EMAIL, admin_2FA_code)
-                return redirect(url_for('admin_2FA'))
-                # admin_login_status = True
-                # return redirect(url_for('admin_dashboard'))
-            
-            except Exception as E:
-                website_error = ['admin login form', E]
-                return render_template('Admin/admin_login.html', 
-                                        alert_message='[ Unable to send 2FA code. ]')
+            # admin_2FA_code = create_2FA_code()
+            # send_2FA_2_admin(EMAIL, admin_2FA_code)
+            return redirect(url_for('admin_2FA'))
                 
         else: return render_template('Admin/admin_login.html', 
                                      alert_message='[ Wrong Password ]')
@@ -502,16 +494,18 @@ def admin_login_form():
 @http.route('/admin/login/register')
 def admin_register():
     return render_template('Admin/admin_registration.html', 
-                           web_page_msg=greeting())
+                           web_page_msg=greeting(),
+                           next_bool=False)
 
 @http.route('/admin/login/register', methods=['POST'])
 def admin_register_form():
     global website_error
+    global admin_ssid, admin_login_status
     
     _db = sqlite3.connect('Database/kiit_kp_canteen.db')
     sql = _db.cursor()
     
-    SSID = request.form['ussid']
+    SSID = admin_ssid = request.form['ussid']
     EMAIL = request.form['email']
     PSWD = request.form['new_password']
     C_PSWD = request.form['confirm_password']
@@ -527,29 +521,72 @@ def admin_register_form():
     if SSID in admin_ssid_s:
         return render_template('Admin/admin_registration.html', 
                                error='[ SSID already in use. ]',
-                               status="❌")
+                               status="❌",
+                               next_bool=False)
     
     elif PSWD != C_PSWD:
         return render_template('Admin/admin_registration.html',
                                error='[ Wrong confirmation password. ]',
-                               status="❌")
+                               status="❌",
+                               next_bool=False)
         
     elif (len(PSWD) < 4) and (len(C_PSWD) < 4):
         return render_template('Admin/admin_registration.html',
                                error='[ Password too short. ]',
-                               status="❌")
+                               status="❌",
+                               next_bool=False)
     
     else:
         register_status = register_admin(_db, SSID, PSWD, EMAIL)
         if register_status is True:
+            admin_login_status = True
+
             return render_template('Admin/admin_registration.html',
-                                   web_page_msg='Now you can login.',
-                                   status='✅')
+                                   web_page_msg='Registered, click `NEXT` to authenticate account.',
+                                   status='✅',
+                                   next_bool=True)
             
         else:
             website_error = ['admin registration', register_status]
             return render_template('Admin/admin_registration.html',
-                                   error='[ Registration Failed. ]')
+                                   error='[ Registration Failed. ]',
+                                   next_bool=False)
+
+
+# ******************************************************** #
+@http.route('/admin/login/authentication')
+def authentication():
+    global website_error
+    global admin_ssid, admin_2FA_code, admin_login_status
+
+    if admin_login_status is True:
+        admin_2FA_code = pyotp.TOTP('3232323232323232')
+        
+        try: google_authentication(admin_2FA_code, admin_ssid)
+        except Exception as E:
+            website_error = ['authentication web method', E]
+            return render_template('Admin/google_authenticator.html', 
+                            error='[ Oops! Something went wrong... 🤷🏻‍♂️]',
+                            user=admin_ssid)
+
+        return render_template('Admin/google_authenticator.html', 
+                            web_page_msg='Scan the QR Code and enter the oAuth code to Activate 2FA',
+                            user=admin_ssid)
+    
+    else: return redirect(url_for('admin_register'))
+
+@http.route('/admin/login/authentication', methods=['POST'])
+def authenticator_verification():
+    global admin_2FA_code
+
+    gAuth_otp = request.form['gAuth']
+    if (str(gAuth_otp) == str(admin_2FA_code.now())):
+        return redirect(url_for("admin_dashboard"))
+    
+    else:
+        return render_template('Admin/google_authenticator.html', 
+                           error='[ Invalid Authentication Code. ]',
+                           user=admin_ssid)
 
 
 # ******************************************************** #
@@ -561,9 +598,11 @@ def admin_2FA():
 def admin_2FA_form():
     global admin_2FA_code
     global admin_login_status
-    
+
+    admin_2FA_code = pyotp.TOTP('3232323232323232')
     code = request.form['admin_2FA_code']
-    if code == admin_2FA_code:
+
+    if (str(code) == str(admin_2FA_code.now())):
         admin_login_status = True
         return redirect(url_for('admin_dashboard'))
     
@@ -586,13 +625,15 @@ def admin_pswd_reset_redirect_form():
     admin_ssid = str(request.form['admin_ssid'])
 
     try:
-        sql.execute(f"SELECT Email FROM admin_logins WHERE SSID='{admin_ssid}'")
-        admin_email = sql.fetchone()[0]
+        sql.execute("SELECT SSID FROM admin_logins")
+        admin_ssid_s = sql.fetchone()[0]
 
-        admin_2FA_code = create_2FA_code(code_type='alpha')
-
-        send_2FA_2_admin(str(admin_email), admin_2FA_code, 'pswd-reset')
-        return redirect(url_for('admin_pswd_reset'))
+        if str(admin_ssid) in admin_ssid_s:
+            return redirect(url_for('admin_pswd_reset'))
+        
+        elif str(admin_ssid) not in admin_ssid_s:
+            return render_template('Admin/pswd_reset_redirect.html',
+                               validity='[ Invalid Admin SSID ]')
     
     except Exception as E:
         website_error = ['admin pswd-reset redirector', E]
@@ -610,6 +651,8 @@ def admin_pswd_reset():
 def admin_pswd_reset_form():
     global website_error
     global admin_ssid, admin_2FA_code
+    
+    admin_2FA_code = pyotp.TOTP('3232323232323232')
 
     _db = sqlite3.connect('Database/kiit_kp_canteen.db')
     sql = _db.cursor()
@@ -618,7 +661,7 @@ def admin_pswd_reset_form():
     new_pswd = request.form['new_password']
     re_new_pswd = request.form['confirm_password']
     
-    if str(admin_2FA) != str(admin_2FA_code):
+    if str(admin_2FA) != str(admin_2FA_code.now()):
         return render_template('Admin/admin_password_reset.html', 
                                error='[ Wrong 2FA Code ]')
     
@@ -890,40 +933,22 @@ def developer_error_page():
 
 
 # ******************************************************** #
-@http.route('/server_shutdown')
-def server_shutdown():
-    global admin_2FA_code, admin_login_status
-    global website_error
-
-    if admin_login_status is True:
-        admin_2FA_code = create_2FA_code(16, 'hy')
-        try:
-            send_2FA_2_admin(MASTER_2FA_EMAIL, admin_2FA_code, 'shutting down the server')
-            return redirect(url_for('server_shutdown_2FA'))
-        
-        except Exception as E:
-            website_error = ['sending 2FA for server shutdown', E]
-            return '''<h1 align="center">Oops!! Something went wrong 😬
-<br><a href="/admin/dashboard">Go Back</a></h1>'''
-
-    else: return redirect(url_for('admin_login'))
-
-
-# ******************************************************** #
-@http.route('/admin/developer/server_shutdown/2FA')
+@http.route('/admin/developer/server_shutdown')
 def server_shutdown_2FA():
     global admin_login_status
     
     if admin_login_status is True: return render_template('Admin/admin_2FA.html')
     else: return redirect(url_for('admin_login'))
 
-@http.route('/admin/developer/server_shutdown/2FA', methods=['POST'])
+@http.route('/admin/developer/server_shutdown', methods=['POST'])
 def server_shutdown_2FA_form():
     global admin_2FA_code
     global website_error
     
+    admin_2FA_code = pyotp.TOTP('3232323232323232')
+    
     code = request.form['admin_2FA_code']
-    if str(code) == admin_2FA_code:
+    if (str(code) == str(admin_2FA_code.now())):
         
         try: quit()
         except KeyboardInterrupt as KI:
