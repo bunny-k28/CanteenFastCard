@@ -207,14 +207,14 @@ def manual_id_registration_form():
 
 
 # ******************************************************** #
-@http.route('/dashboard/<user>')
-def dashboard(user):
-    global student_login
+@http.route('/dashboard/')
+def dashboard():
+    global student_login, student_roll_no
     
     if student_login is True:
         return render_template('Student/dashboard.html', 
-                            web_page_msg=f'Hey there: {str(user)}. Welcome!', 
-                            student_roll_no=str(user))
+                            web_page_msg=f'Hey there: {str(student_roll_no)}. Welcome!', 
+                            student_roll_no=str(student_roll_no))
         
     else: return redirect(url_for('home'))
 
@@ -251,7 +251,7 @@ def payment_form():
         return render_template('Student/payment.html', 
                                web_page_msg=f'Hey there: {str(student_roll_no)}. Welcome!',
                                student_roll_no=str(student_roll_no), 
-                               debit_status='Unable to do the transaction')
+                               debit_status='❌')
 
 
 # ******************************************************** #
@@ -286,7 +286,7 @@ def update__account_balance_form():
         return render_template('Student/update_amount.html', 
                                web_page_msg=f'Hey there: {str(student_roll_no)}. Welcome!',
                                student_roll_no=str(student_roll_no),
-                               update_status='Unable to do the transaction')
+                               update_status='❌')
 
 
 # ******************************************************** #
@@ -326,7 +326,8 @@ def view_log():
         
         except Exception as E:
             website_error = ['view_log web method', E]
-            return render_template('Student/dashboard.html', web_page_msg="Oops... Something went wrong 🤷🏼‍♂️")
+            return render_template('Student/dashboard.html', 
+                                   error="Oops... Something went wrong 🤷🏼‍♂️")
         
     else: return redirect(url_for('home'))
 
@@ -350,7 +351,7 @@ def send_transaction_log():
         
         except Exception as E:
             website_error = ['Sending Log (send_transaction_log web method)', E]
-            return render_template('Student/dashboard.html', web_page_msg="Oops... Something went wrong 🤷🏼‍♂️")
+            return render_template('Student/dashboard.html', alert_message="Oops... Something went wrong 🤷🏼‍♂️")
         
     else: return redirect(url_for('home'))
 
@@ -358,7 +359,7 @@ def send_transaction_log():
 # ******************************************************** #
 @http.route('/account/update/pin_code/2FA')
 def twoFA():
-    return render_template('Student/2FA.html')
+    return render_template('Student/2FA.html', validity='')
 
 @http.route('/account/update/pin_code/2FA', methods=['POST'])
 def twoFA_form():
@@ -382,7 +383,7 @@ def twoFA_form():
             return render_template('Student/2FA.html', validity="Oops... Something went wrong 🤷🏼‍♂️")
     
     else:
-        return render_template('Student/2FA.html', validity='Is ID is not registered')
+        return render_template('Student/2FA.html', validity='This ID is not registered')
 
 
 # ******************************************************** #
@@ -438,15 +439,15 @@ def update_account_pin_code_form():
                 return render_template('Student/pin_code_reset.html', 
                            web_page_msg=msg, 
                            student_roll_no=str(student_roll_no),
-                           status='Unable to reset pin code')
+                           status='❌')
                 
         else: return render_template('Student/pin_code_reset.html', 
                                     student_roll_no=str(student_roll_no),
-                                    web_page_msg='Incorrect Pin Confirmation')
+                                    error='Incorrect Pin Confirmation')
         
     else: return render_template('pin_code_reset.html', 
                                 student_roll_no=str(student_roll_no),
-                                web_page_msg='Incorrect 2FA Code')
+                                error='Incorrect 2FA Code')
 
 
 
@@ -542,7 +543,7 @@ def admin_register_form():
             admin_login_status = True
 
             return render_template('Admin/admin_registration.html',
-                                   web_page_msg='Registered, click `NEXT` to authenticate account.',
+                                   web_page_msg2='Registered, click `NEXT` to authenticate account.',
                                    status='✅',
                                    next_bool=True)
             
@@ -678,7 +679,7 @@ def admin_pswd_reset_form():
         _db.commit()
         
         return render_template('Admin/admin_password_reset.html',
-                               web_page_msg='Password successfully updated.',
+                               web_page_msg2='Password successfully updated.',
                                status='✅')
 
 

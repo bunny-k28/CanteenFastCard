@@ -25,11 +25,16 @@
         </font>
     </h2>
 
-    <h2 align="center">
-        <font color="red">
-            <pre>{{ error }}</pre>
-        </font>
-    </h2>
+    <div class="container">
+		{% if error.__len__() > 0 %}
+			<div class="alert alert-danger alert-dismissible fade show" role="alert">
+				<strong>
+					<h3>{{ error }}</h3>
+				</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		{% endif %}
+	</div>
 
     <br>
 

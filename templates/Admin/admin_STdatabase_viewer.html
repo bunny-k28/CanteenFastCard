@@ -99,9 +99,16 @@
 
     <br><br>
 
-    <h3 align="center">
-        <pre>{{ page_error }}</pre>
-    </h3>
+    <div class="container">
+		{% if page_error.__len__() > 0 %}
+			<div class="alert alert-danger alert-dismissible fade show" role="alert">
+				<strong>
+					<h3>{{ page_error }}</h3>
+				</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		{% endif %}
+	</div>
 
     <br>
 

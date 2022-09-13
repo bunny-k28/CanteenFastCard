@@ -41,16 +41,18 @@
         </ul>
     </nav>
 
-    
-
     <br>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/alert.css') }}">
-    <h2>
-        <pre class="alert-message">{{ alert_message }}</pre>
-    </h2>
-
-    <br>
+    <div class="container">
+        {% if alert_message.__len__() > 0 %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>
+                    <h3>{{ alert_message }}</h3>
+                </strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+    </div>
 
     <div class="container home">
         <div class="container">

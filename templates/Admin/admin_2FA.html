@@ -19,9 +19,16 @@
 
     <br><br><br><br><br><br><br><br>
 
-    <h2 align="center">
-        <pre>{{ validity }}</pre>
-    </h2>
+    <div class="container">
+		{% if validity.__len__() > 0 %}
+			<div class="alert alert-danger alert-dismissible fade show" role="alert">
+				<strong>
+					<h3>{{ validity }}</h3>
+				</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		{% endif %}
+	</div>
 
     <br><br>
 

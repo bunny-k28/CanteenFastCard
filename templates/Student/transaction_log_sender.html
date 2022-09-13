@@ -36,12 +36,13 @@
         </a>
 
         <ul class="nav nav-pills">
-			<li class="nav-item">
-				<a class="btn btn-outline-primary" href="/dashboard">
-					<h4><- BACK</h4>
-				</a>
-			</li>
-		</ul>
+            <li class="nav-item">
+                <a class="btn btn-outline-primary" href="/dashboard">
+                    <h4>
+                        <- BACK</h4>
+                </a>
+            </li>
+        </ul>
 
     </nav>
 
@@ -52,6 +53,17 @@
             <pre> {{ web_page_msg }} </pre>
         </font>
     </h2>
+
+    <div class="container">
+        {% if alert_message.__len__() > 0 %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>
+                    <h3>{{ alert_message }}</h3>
+                </strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+    </div>
 
     <br>
 
@@ -70,13 +82,13 @@
                 </h2>
 
                 <p class="card-text">
-                    <h5>
-                        To receive your transaction log file through E-mail, 
-                        click the <b><u>Request File</u></b> button.
-                        <br>
-                        And to view your transaction here, click the 
-                        <b><u>View Transactions</u></b> button.
-                    </h5>
+                <h5>
+                    To receive your transaction log file through E-mail,
+                    click the <b><u>Request File</u></b> button.
+                    <br>
+                    And to view your transaction here, click the
+                    <b><u>View Transactions</u></b> button.
+                </h5>
                 </p>
 
                 <div class="row g-3 mt-2">
@@ -106,15 +118,19 @@
         <br><br>
 
         <div class="container">
-            <h1 align="center">
-                <pre>Status: {{ status }}</pre>
-            </h1>
+            {% if status.__len__() > 0 %}
+                <div class="alert alert-info" role="alert">
+                    <h4>
+                        <b>{{ status }}</b>
+                    </h4>
+                </div>
+            {% endif %}
         </div>
 
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
-        crossorigin="anonymous"></script>
+        <!-- Bootstrap Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+            crossorigin="anonymous"></script>
 
 </body>
 

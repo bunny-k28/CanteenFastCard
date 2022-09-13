@@ -33,7 +33,7 @@
 		</a>
 
 		<div class="btn-group">
-			<a type="button" class="btn btn-outline-primary" href="/home">
+			<a type="button" class="btn btn-outline-primary" href="/admin/login/register">
 				<h4>
 					Admin Registration
 				</h4>
@@ -46,7 +46,7 @@
 
 			<ul class="dropdown-menu">
 				<li>
-					<a class="dropdown-item" href="/admin/login/register">
+					<a class="dropdown-item" href="/home">
 						Student Login
 					</a>
 				</li>
@@ -55,16 +55,20 @@
 
 	</nav>
 
-
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/alert.css') }}">
-
-	<br><br><br>
-
-	<h2 align="center">
-		<pre class="alert-message">{{ alert_message }}</pre>
-	</h2>
-
 	<br><br>
+
+	<div class="container">
+		{% if alert_message.__len__() > 0 %}
+			<div class="alert alert-danger alert-dismissible fade show" role="alert">
+				<strong>
+					<h3>{{ alert_message }}</h3>
+				</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		{% endif %}
+	</div>
+
+	<br>
 
 	<div class="container home">
 

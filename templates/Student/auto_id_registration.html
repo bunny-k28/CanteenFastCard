@@ -46,10 +46,14 @@
     <div class="container home">
         <div class="container">
 
-            <link rel="stylesheet" href="{{ url_for('static', filename='css/alert.css') }}">
-            <h2>
-                <pre class="alert-message">{{ alert_message }}</pre>
-            </h2>
+            {% if alert_message.__len__() > 0 %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>
+                        <h3>{{ alert_message }}</h3>
+                    </strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endif %}
 
             <form method="post">
                 <div class="mb-3 mt-5">
@@ -58,8 +62,7 @@
                             <h5>Student Name</h5>
                         </b>
                     </label>
-                    <input type="text" class="form-control" 
-                    name='std_name' placeholder="Your Full Name" required>
+                    <input type="text" class="form-control" name='std_name' placeholder="Your Full Name" required>
                 </div>
                 <div class="mb-3 mt-5">
                     <label class="text-body">
@@ -67,9 +70,8 @@
                             <h5>Personal Email-ID</h5>
                         </b>
                     </label>
-                    <input type="email" class="form-control" 
-                    name='email' placeholder="xyz@example.com"
-                    aria-label="Email ID" aria-describedby="addon-wrapping" required>
+                    <input type="email" class="form-control" name='email' placeholder="xyz@example.com"
+                        aria-label="Email ID" aria-describedby="addon-wrapping" required>
                 </div>
                 <div class="mb-3 mt-5">
                     <label class="text-body">
@@ -78,14 +80,14 @@
                         </b>
                     </label>
                     <input type="password" class="form-control" name='pin_code'
-                        placeholder="Create new Pin-Code (min 4 charecters)" 
-                        aria-label="Password" aria-describedby="addon-wrapping" required>
+                        placeholder="Create new Pin-Code (min 4 charecters)" aria-label="Password"
+                        aria-describedby="addon-wrapping" required>
                 </div>
                 <div class="mb-3 mt-2">
                     <div class="input-group mb-3">
                         <span class="input-group-text">₹</span>
-                        <input type="number" class="form-control" 
-                        name="initial_amount" placeholder="Enter Initial Amount" required>
+                        <input type="number" class="form-control" name="initial_amount"
+                            placeholder="Enter Initial Amount" required>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary btn-lg mb-3">Register</button><br>

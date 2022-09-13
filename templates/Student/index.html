@@ -39,8 +39,8 @@
 				</h4>
 			</a>
 
-			<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" 
-			data-bs-toggle="dropdown" aria-expanded="false">
+			<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split"
+				data-bs-toggle="dropdown" aria-expanded="false">
 				<span class="visually-hidden">Toggle Dropdown</span>
 			</button>
 
@@ -52,20 +52,20 @@
 		</div>
 	</nav>
 
-	
-	<link rel="stylesheet" href="{{ url_for('static', filename='css/alert.css') }}">
-	
-	<br><br><br>
-
-	<h2 align="center">
-		<pre class="alert-message">{{ alert_message }}</pre>
-	</h2>
-
 	<br><br>
 
 	<div class="container home">
 
 		<div class="container" id="student_id">
+			{% if alert_message.__len__() > 0 %}
+				<div class="alert alert-danger alert-dismissible fade show" role="alert">
+					<strong>
+						<h3>{{ alert_message }}</h3>
+					</strong>
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+			{% endif %}
+
 			<div class="container">
 
 				<br>
@@ -89,13 +89,11 @@
 					</div>
 
 					<div class="col-3">
-						<input type="number" class="form-control" 
-						name="std_id" placeholder="Student ID" required>
+						<input type="number" class="form-control" name="std_id" placeholder="Student ID" required>
 					</div>
 
 					<div class="col-3">
-						<input type="password" class="form-control" 
-						name="std_id_pin" placeholder="pin code" required>
+						<input type="password" class="form-control" name="std_id_pin" placeholder="pin code" required>
 					</div>
 
 					<div class="d-grid gap-2 col-6 mx-auto">
