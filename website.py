@@ -130,7 +130,7 @@ def auto_id_registration_form():
     id_pin_code = request.form['pin_code']
     init_amount = request.form['initial_amount']
     
-    if len(id_pin_code) < 0:
+    if len(id_pin_code) < 4:
         return render_template('Student/auto_id_registration.html', 
                                alert_message='[ Pin Code too short! ]')
 
@@ -169,7 +169,7 @@ def manual_id_registration_form():
     id_pin_code = request.form['pin_code']
     init_amount = request.form['initial_amount']
     
-    if len(id_pin_code) < 0:
+    if len(id_pin_code) < 4:
         return render_template('Student/manual_id_registration.html', 
                                alert_message='[ Pin Code too short! ]')
     
@@ -404,30 +404,35 @@ def update_account_pin_code_form():
     
     if str(user_2FA) == str(twoFA_code):
         if str(new_pin_code) == str(confirm_pin_code):
-            sql = _db.cursor()
+            if (str(new_pin_code).__len__() < 4) and (str(confirm_pin_code).__len__() < 4):
+                sql = _db.cursor()
 
-            try:
-                sql.execute(f'''UPDATE student_account 
-                            SET pin_code = {str(confirm_pin_code)} 
-                            WHERE id={int(session["active_student_id"])};''')
-                _db.commit()
+                try:
+                    sql.execute(f'''UPDATE student_account 
+                                SET pin_code = {str(confirm_pin_code)} 
+                                WHERE id={int(session["active_student_id"])};''')
+                    _db.commit()
 
-                send_mail(_db, int(session["active_student_id"]), 'pin_code_update', confirm_pin_code)
-                
-                return render_template('Student/pin_code_reset.html', 
-                                        student_roll_no=str(session["active_student_id"]),
-                                        web_page_msg='Pin-Code successfully changed. Now you can login.')
-                
-            except Exception as E:
-                std_email = get_student_details(_db, int(session["active_student_id"]), 'email')
-                msg = f'The 2FA code has been sent to {std_email}'
-                website_error = ['Resetting user PIN code', E]
+                    send_mail(_db, int(session["active_student_id"]), 'pin_code_update', confirm_pin_code)
+                    
+                    return render_template('Student/pin_code_reset.html', 
+                                            student_roll_no=str(session["active_student_id"]),
+                                            web_page_msg='Pin-Code successfully changed. Now you can login.')
+                    
+                except Exception as E:
+                    std_email = get_student_details(_db, int(session["active_student_id"]), 'email')
+                    msg = f'The 2FA code has been sent to {std_email}'
+                    website_error = ['Resetting user PIN code', E]
 
-                return render_template('Student/pin_code_reset.html', 
-                           web_page_msg=msg, 
-                           student_roll_no=str(session["active_student_id"]),
-                           status='❌')
-                
+                    return render_template('Student/pin_code_reset.html', 
+                            web_page_msg=msg, 
+                            student_roll_no=str(session["active_student_id"]),
+                            status='❌')
+
+            else: return render_template('Student/pin_code_reset.html', 
+                                    student_roll_no=str(session["active_student_id"]),
+                                    error='Pin Code too short. Min 4 char')
+
         else: return render_template('Student/pin_code_reset.html', 
                                     student_roll_no=str(session["active_student_id"]),
                                     error='Incorrect Pin Confirmation')
@@ -652,7 +657,7 @@ def admin_pswd_reset_form():
         return render_template('Admin/admin_password_reset.html', 
                                error='[ Wrong 2FA Code ]')
     
-    elif (len(new_pswd) < 6) and (len(re_new_pswd) < 6):
+    elif (len(new_pswd) < 4) and (len(re_new_pswd) < 4):
         return render_template('Admin/admin_password_reset.html', 
                                error='[ Password is too short. Min 6 chars ]')
 
