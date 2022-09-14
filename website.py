@@ -216,21 +216,30 @@ def payment_form():
     global website_error
     
     _db = sqlite3.connect('Database/kiit_kp_canteen.db')
+    
     amount_to_pay = request.form['amount_to_pay']
+    std_amount = get_student_details(_db, int(session["active_student_id"]), 'amount')
 
-    try:
-        debit_balance(_db, int(amount_to_pay), int(session["active_student_id"]))
+    if int(amount_to_pay) > int(std_amount):
         return render_template('Student/payment.html', 
                                web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
                                student_roll_no=str(session["active_student_id"]),
-                               debit_status='✅')
-    
-    except Exception as E:
-        website_error = ['payment form', E]
-        return render_template('Student/payment.html', 
-                               web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
-                               student_roll_no=str(session["active_student_id"]), 
-                               debit_status='❌')
+                               debit_status=f'⚠️Amount in account is less: ₹{std_amount}')
+
+    else:
+        try:
+            debit_balance(_db, int(amount_to_pay), int(session["active_student_id"]))
+            return render_template('Student/payment.html', 
+                                web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
+                                student_roll_no=str(session["active_student_id"]),
+                                debit_status='✅')
+
+        except Exception as E:
+            website_error = ['payment form', E]
+            return render_template('Student/payment.html', 
+                                web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
+                                student_roll_no=str(session["active_student_id"]), 
+                                debit_status='❌')
 
 
 # ******************************************************** #
@@ -244,25 +253,36 @@ def update_account_balance():
     else: return redirect(url_for('home'))
 
 @http.route('/account/update/balance', methods=['POST'])
-def update__account_balance_form():
+def update_account_balance_form():
     global website_error
     
     _db = sqlite3.connect('Database/kiit_kp_canteen.db')
-    amount_to_pay = request.form['amount_to_update']
+    amount_to_update = request.form['amount_to_update']
+    if int(amount_to_update) < 0:
+        return render_template('Student/update_amount.html', 
+                               web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
+                               student_roll_no=str(session["active_student_id"]),
+                               update_status='⚠️Invalid amount.')
 
-    try:
-        update_balance(_db, int(amount_to_pay), int(session["active_student_id"]))
+    elif int(amount_to_update) == 0:
         return render_template('Student/update_amount.html', 
                                web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
-                               student_roll_no=str(session["active_student_id"]),
-                               update_status='✅')
-    
-    except Exception as E:
-        website_error = ['payment form', E]
-        return render_template('Student/update_amount.html', 
-                               web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
-                               student_roll_no=str(session["active_student_id"]),
-                               update_status='❌')
+                               student_roll_no=str(session["active_student_id"]))
+
+    else:
+        try:
+            update_balance(_db, int(amount_to_update), int(session["active_student_id"]))
+            return render_template('Student/update_amount.html', 
+                                web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
+                                student_roll_no=str(session["active_student_id"]),
+                                update_status='✅')
+        
+        except Exception as E:
+            website_error = ['payment form', E]
+            return render_template('Student/update_amount.html', 
+                                web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
+                                student_roll_no=str(session["active_student_id"]),
+                                update_status='❌')
 
 
 # ******************************************************** #
