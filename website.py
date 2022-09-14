@@ -295,8 +295,8 @@ def check_balance():
         return render_template('Student/balance_check.html',
                                web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
                                student_roll_no=session["active_student_id"], 
-                               amount=f'Left Amount: Rs. {str(left_amount)}')
-        
+                               amount=str(left_amount))
+
     else: return redirect(url_for('home'))
 
 
