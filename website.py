@@ -7,7 +7,7 @@ import pyotp
 import pandas
 import sqlite3
 
-from flask import Flask, url_for, redirect, render_template, request
+from flask import Flask, url_for, redirect, render_template, request, session
 from dotenv import load_dotenv
 
 from scanner import scan
@@ -39,19 +39,13 @@ MASTER_2FA_EMAIL = os.environ.get('MASTER_2FA_EMAIL')
 
 
 # global variables
-student_roll_no = int()
 twoFA_code = str()
-student_login = bool(False)
-
 website_error = list()
 std_log_details = str()
-
 admin_2FA_code = pyotp.TOTP
-admin_ssid = str()
-admin_login_status = bool(False)
 
 http = Flask(__name__)
-# http.config['SECRET_KEY'] = '3d9efc4wa651728'
+http.secret_key = '3d9efc4wa651728'
 
 
 
@@ -65,32 +59,22 @@ def home_redirecter():
 # ******************************************************** #
 @http.route('/home')
 def home():
-    global student_roll_no, student_login
-    global admin_login_status
-    
-    student_login = False
-    student_roll_no = int()
-    
-    admin_login_status = False
-
     return render_template('Student/index.html')
 
 @http.route('/home', methods=['POST'])
-def student_id_info():
-    _db = sqlite3.connect('Database/kiit_kp_canteen.db')
-
-    global student_roll_no, student_login
+def login():
     global website_error
+
+    _db = sqlite3.connect('Database/kiit_kp_canteen.db')
     
-    student_roll_no = int(request.form['std_id'])
+    session["active_student_id"] = int(request.form['std_id'])
     std_id_pin = request.form['std_id_pin']
     
     try:
-        if scan_ids(_db, int(student_roll_no)) is True:
-            if get_student_details(_db, int(student_roll_no), 'pin_code') == std_id_pin:
-                
-                student_login = True
-                return redirect(url_for('dashboard', user=str(student_roll_no)))
+        if scan_ids(_db, int(session["active_student_id"])) is True:
+            if get_student_details(_db, int(session["active_student_id"]), 'pin_code') == std_id_pin:
+
+                return redirect(url_for('dashboard', user=str(session["active_student_id"])))
 
             else: return render_template('Student/index.html', alert_message='[ Invalid Pin Code ]')
         else: return redirect(url_for('auto_id_registration'))
@@ -101,19 +85,26 @@ def student_id_info():
 
 
 # ******************************************************** #
+@http.route('/dashboard/logout')
+def logout():
+    try: session.pop("active_student_id", None)
+    except Exception: pass
+    
+    return redirect(url_for('home', status='logged-out'))
+    
+
+# ******************************************************** #
 @http.route('/id/scan')
-def scan_std_id():
-    global student_roll_no, student_login
+def login_by_scan():
     global website_error
 
     _db = sqlite3.connect('Database/kiit_kp_canteen.db')
     
     try:
-        student_roll_no = scan()
+        session["active_student_id"] = scan()
 
-        if scan_ids(_db, int(student_roll_no)): 
-            student_login=True
-            return redirect(url_for('dashboard', user=str(student_roll_no)))
+        if scan_ids(_db, int(session["active_student_id"])):
+            return redirect(url_for('dashboard', user=str(session["active_student_id"])))
 
         else: return redirect(url_for('auto_id_registration'))
         
@@ -130,7 +121,7 @@ def auto_id_registration():
 
 @http.route('/id/auto_registration', methods=['POST'])
 def auto_id_registration_form():
-    global student_roll_no, student_login
+    global website_error
 
     _db = sqlite3.connect('Database/kiit_kp_canteen.db')
 
@@ -149,15 +140,12 @@ def auto_id_registration_form():
 
     else:
         try:
-            register_student(_db, int(student_roll_no), id_pin_code,
+            register_student(_db, int(session["active_student_id"]), id_pin_code,
                             int(init_amount), [name, email])
             
-            student_login = True
-            
-            return redirect(url_for('dashboard', user=str(student_roll_no)))
+            return redirect(url_for('dashboard', user=str(session["active_student_id"])))
 
         except Exception as E:
-            global website_error
             
             website_error = ['register', E]
             return render_template('Student/auto_id_registration.html', 
@@ -171,11 +159,11 @@ def manual_id_registration():
 
 @http.route('/id/manual_registration', methods=['POST'])
 def manual_id_registration_form():
-    global student_roll_no, student_login
+    global website_error
 
     _db = sqlite3.connect('Database/kiit_kp_canteen.db')
 
-    student_roll_no = request.form['std_roll_no']
+    session["active_student_id"] = request.form['std_roll_no']
     name = request.form['std_name']#.replace(' ', '_')
     email = request.form['email']
     id_pin_code = request.form['pin_code']
@@ -191,16 +179,12 @@ def manual_id_registration_form():
     
     else:
         try:
-            register_student(_db, int(student_roll_no), id_pin_code,
+            register_student(_db, int(session["active_student_id"]), id_pin_code,
                             int(init_amount), [name, email])
             
-            student_login = True
-            
-            return redirect(url_for('dashboard', user=str(student_roll_no)))
+            return redirect(url_for('dashboard', user=str(session["active_student_id"])))
 
         except Exception as E:
-            global website_error
-            
             website_error = ['register', E]
             return render_template('Student/manual_id_registration.html', 
                                 alert_message='[ Unable to register this ID ]')
@@ -209,12 +193,10 @@ def manual_id_registration_form():
 # ******************************************************** #
 @http.route('/dashboard/')
 def dashboard():
-    global student_login, student_roll_no
-    
-    if student_login is True:
+    if "active_student_id" in session:
         return render_template('Student/dashboard.html', 
-                            web_page_msg=f'Hey there: {str(student_roll_no)}. Welcome!', 
-                            student_roll_no=str(student_roll_no))
+                            web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!', 
+                            student_roll_no=str(session["active_student_id"]))
         
     else: return redirect(url_for('home'))
 
@@ -222,85 +204,77 @@ def dashboard():
 # ******************************************************** #
 @http.route('/account/payment')
 def payment():
-    global student_roll_no, student_login
-    
-    if student_login is True:
+    if "active_student_id" in session:
         return render_template('Student/payment.html', 
-                            web_page_msg=f'Hey there: {str(student_roll_no)}. Welcome!', 
-                            student_roll_no=str(student_roll_no))
+                            web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!', 
+                            student_roll_no=str(session["active_student_id"]))
     
     else: return redirect(url_for('home'))
 
 @http.route('/account/payment', methods=['POST'])
 def payment_form():
-    global student_roll_no
     global website_error
     
     _db = sqlite3.connect('Database/kiit_kp_canteen.db')
     amount_to_pay = request.form['amount_to_pay']
 
     try:
-        debit_balance(_db, int(amount_to_pay), int(student_roll_no))
+        debit_balance(_db, int(amount_to_pay), int(session["active_student_id"]))
         return render_template('Student/payment.html', 
-                               web_page_msg=f'Hey there: {str(student_roll_no)}. Welcome!',
-                               student_roll_no=str(student_roll_no),
+                               web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
+                               student_roll_no=str(session["active_student_id"]),
                                debit_status='✅')
     
     except Exception as E:
         website_error = ['payment form', E]
         return render_template('Student/payment.html', 
-                               web_page_msg=f'Hey there: {str(student_roll_no)}. Welcome!',
-                               student_roll_no=str(student_roll_no), 
+                               web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
+                               student_roll_no=str(session["active_student_id"]), 
                                debit_status='❌')
 
 
 # ******************************************************** #
 @http.route('/account/update/balance')
 def update_account_balance():
-    global student_roll_no, student_login
-    
-    if student_login is True:
+    if "active_student_id" in session:
         return render_template('Student/update_amount.html', 
-                            web_page_msg=f'Hey there: {str(student_roll_no)}. Welcome!', 
-                            student_roll_no=str(student_roll_no))
+                            web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!', 
+                            student_roll_no=str(session["active_student_id"]))
         
     else: return redirect(url_for('home'))
 
 @http.route('/account/update/balance', methods=['POST'])
 def update__account_balance_form():
-    global student_roll_no
     global website_error
     
     _db = sqlite3.connect('Database/kiit_kp_canteen.db')
     amount_to_pay = request.form['amount_to_update']
 
     try:
-        update_balance(_db, int(amount_to_pay), int(student_roll_no))
+        update_balance(_db, int(amount_to_pay), int(session["active_student_id"]))
         return render_template('Student/update_amount.html', 
-                               web_page_msg=f'Hey there: {str(student_roll_no)}. Welcome!',
-                               student_roll_no=str(student_roll_no),
+                               web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
+                               student_roll_no=str(session["active_student_id"]),
                                update_status='✅')
     
     except Exception as E:
         website_error = ['payment form', E]
         return render_template('Student/update_amount.html', 
-                               web_page_msg=f'Hey there: {str(student_roll_no)}. Welcome!',
-                               student_roll_no=str(student_roll_no),
+                               web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
+                               student_roll_no=str(session["active_student_id"]),
                                update_status='❌')
 
 
 # ******************************************************** #
 @http.route('/account/check_balance')
 def check_balance():
-    global student_roll_no, student_login
-
-    if student_login is True:
+    if "active_student_id" in session:
         _db = sqlite3.connect('Database/kiit_kp_canteen.db')
-        left_amount = get_student_details(_db, int(student_roll_no), 'amount')
+        left_amount = get_student_details(_db, int(session["active_student_id"]), 'amount')
         
         return render_template('Student/balance_check.html',
-                               web_page_msg=f'Hey there: {str(student_roll_no)}. Welcome!',
-                               student_roll_no=student_roll_no, 
+                               web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
+                               student_roll_no=session["active_student_id"], 
                                amount=f'Left Amount: Rs. {str(left_amount)}')
         
     else: return redirect(url_for('home'))
@@ -309,19 +283,18 @@ def check_balance():
 # ******************************************************** #
 @http.route('/account/transaction/view')
 def view_log():
-    global student_roll_no, student_login
     global website_error
 
-    if student_login is True:
+    if "active_student_id" in session:
         try:
             _db = sqlite3.connect('Database/kiit_kp_canteen.db')
-            std_log_name = get_student_details(_db, int(student_roll_no), 'usid')
+            std_log_name = get_student_details(_db, int(session["active_student_id"]), 'usid')
             
             with open(f'Database/logs/{std_log_name}.txt', 'r') as log_file:
                 std_transaction_details = log_file.read()
                 
             return render_template('Student/log_viewer.html', 
-                                   web_page_msg=f'Hey there: {str(student_roll_no)}. Welcome!',
+                                   web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
                                    content=str(std_transaction_details))
         
         except Exception as E:
@@ -335,18 +308,17 @@ def view_log():
 # ******************************************************** #
 @http.route('/account/transaction/send_log')
 def send_transaction_log():
-    global student_roll_no, student_login
     global website_error
     
-    if student_login is True:
+    if "active_student_id" in session:
         _db = sqlite3.connect('Database/kiit_kp_canteen.db')
         
         try:
-            std_email = get_student_details(_db, int(student_roll_no), 'email')
+            std_email = get_student_details(_db, int(session["active_student_id"]), 'email')
 
-            send_mail(_db, int(student_roll_no), 'log')
+            send_mail(_db, int(session["active_student_id"]), 'log')
             return render_template('Student/transaction_log_sender.html', 
-                                   web_page_msg=f'Hey there: {str(student_roll_no)}. Welcome!',
+                                   web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
                                    status=f"Log file Sent to {std_email}")
         
         except Exception as E:
@@ -363,19 +335,17 @@ def twoFA():
 
 @http.route('/account/update/pin_code/2FA', methods=['POST'])
 def twoFA_form():
-    global student_roll_no, student_login
     global website_error
     global twoFA_code
 
     _db = sqlite3.connect('Database/kiit_kp_canteen.db')
-    student_roll_no = int(request.form['std_roll_no_pcr'])
+    session["active_student_id"] = int(request.form['std_roll_no_pcr'])
     
-    if scan_ids(_db, int(student_roll_no)) is True:
+    if scan_ids(_db, int(session["active_student_id"])) is True:
         twoFA_code = create_2FA_code()
-        student_login = True
         
         try:
-            send_mail(_db, int(student_roll_no), '2FA', twoFA_code)
+            send_mail(_db, int(session["active_student_id"]), '2FA', twoFA_code)
             return redirect(url_for('update_account_pin_code'))
         
         except Exception as E:
@@ -389,23 +359,20 @@ def twoFA_form():
 # ******************************************************** #
 @http.route('/account/update/pin_code/reset')
 def update_account_pin_code():
-    global student_roll_no, student_login
-    
-    if student_login is True:
+    if "active_student_id" in session:
         _db = sqlite3.connect('Database/kiit_kp_canteen.db')
         
-        std_email = get_student_details(_db, int(student_roll_no), 'email')
+        std_email = get_student_details(_db, int(session["active_student_id"]), 'email')
         msg = f'The 2FA code has been sent to {std_email}'
 
         return render_template('Student/pin_code_reset.html', 
                             web_page_msg=msg, 
-                            student_roll_no=str(student_roll_no))
+                            student_roll_no=str(session["active_student_id"]))
 
     else: return redirect(url_for('home'))
 
 @http.route('/account/update/pin_code/reset', methods=['POST'])
 def update_account_pin_code_form():
-    global student_roll_no
     global website_error
     global twoFA_code
     
@@ -422,31 +389,31 @@ def update_account_pin_code_form():
             try:
                 sql.execute(f'''UPDATE student_account 
                             SET pin_code = {str(confirm_pin_code)} 
-                            WHERE id={int(student_roll_no)};''')
+                            WHERE id={int(session["active_student_id"])};''')
                 _db.commit()
 
-                send_mail(_db, int(student_roll_no), 'pin_code_update', confirm_pin_code)
+                send_mail(_db, int(session["active_student_id"]), 'pin_code_update', confirm_pin_code)
                 
                 return render_template('Student/pin_code_reset.html', 
-                                        student_roll_no=str(student_roll_no),
+                                        student_roll_no=str(session["active_student_id"]),
                                         web_page_msg='Pin-Code successfully changed. Now you can login.')
                 
             except Exception as E:
-                std_email = get_student_details(_db, int(student_roll_no), 'email')
+                std_email = get_student_details(_db, int(session["active_student_id"]), 'email')
                 msg = f'The 2FA code has been sent to {std_email}'
                 website_error = ['Resetting user PIN code', E]
 
                 return render_template('Student/pin_code_reset.html', 
                            web_page_msg=msg, 
-                           student_roll_no=str(student_roll_no),
+                           student_roll_no=str(session["active_student_id"]),
                            status='❌')
                 
         else: return render_template('Student/pin_code_reset.html', 
-                                    student_roll_no=str(student_roll_no),
+                                    student_roll_no=str(session["active_student_id"]),
                                     error='Incorrect Pin Confirmation')
         
     else: return render_template('pin_code_reset.html', 
-                                student_roll_no=str(student_roll_no),
+                                student_roll_no=str(session["active_student_id"]),
                                 error='Incorrect 2FA Code')
 
 
@@ -455,24 +422,20 @@ def update_account_pin_code_form():
 # ******************************************************** #
 @http.route('/admin/login')
 def admin_login():
-    global admin_login_status
-    
-    admin_login_status = False
     return render_template('Admin/admin_login.html')
 
 @http.route('/admin/login', methods=['POST'])
 def admin_login_form():
     global website_error
-    global admin_login_status
     
-    ssid = str(request.form['ssid'])
+    session["active_admin_ssid"] = str(request.form['ssid'])
     pswd = str(request.form['pswd'])
     
     _db = sqlite3.connect('Database/kiit_kp_canteen.db')
     sql = _db.cursor()
     
     try: 
-        sql.execute(f'SELECT Password, Email FROM admin_logins WHERE SSID="{ssid}"')
+        sql.execute(f'SELECT Password, Email FROM admin_logins WHERE SSID="{session["active_admin_ssid"]}"')
         login_details = sql.fetchone()
         
         PSWD = str(login_details[0])
@@ -491,6 +454,14 @@ def admin_login_form():
         return render_template('Admin/admin_login.html', alert_message='[ Wrong SSID ]')
 
 
+@http.route('/admin/dashboard/logout')
+def admin_logout():
+    try: session.pop("active_admin_ssid", None)
+    except KeyError: return '<h3 align="center">Unable to logout!'
+    
+    return redirect(url_for('admin_login', status='logged-out'))
+
+
 # ******************************************************** #
 @http.route('/admin/login/register')
 def admin_register():
@@ -506,7 +477,7 @@ def admin_register_form():
     _db = sqlite3.connect('Database/kiit_kp_canteen.db')
     sql = _db.cursor()
     
-    SSID = admin_ssid = request.form['ussid']
+    session["active_admin_ssid"] = request.form['ussid']
     EMAIL = request.form['email']
     PSWD = request.form['new_password']
     C_PSWD = request.form['confirm_password']
@@ -519,7 +490,7 @@ def admin_register_form():
     for ssid in ssid_s:
         admin_ssid_s += [ssid[0]]
     
-    if SSID in admin_ssid_s:
+    if session["active_admin_ssid"] in admin_ssid_s:
         return render_template('Admin/admin_registration.html', 
                                error='[ SSID already in use. ]',
                                status="❌",
@@ -538,10 +509,8 @@ def admin_register_form():
                                next_bool=False)
     
     else:
-        register_status = register_admin(_db, SSID, PSWD, EMAIL)
+        register_status = register_admin(_db, session["active_admin_ssid"], PSWD, EMAIL)
         if register_status is True:
-            admin_login_status = True
-
             return render_template('Admin/admin_registration.html',
                                    web_page_msg2='Registered, click `NEXT` to authenticate account.',
                                    status='✅',
@@ -560,19 +529,19 @@ def authentication():
     global website_error
     global admin_ssid, admin_2FA_code, admin_login_status
 
-    if admin_login_status is True:
+    if "active_admin_ssid" in session:
         admin_2FA_code = pyotp.TOTP('3232323232323232')
         
-        try: google_authentication(admin_2FA_code, admin_ssid)
+        try: google_authentication(admin_2FA_code, session["active_admin_ssid"])
         except Exception as E:
             website_error = ['authentication web method', E]
             return render_template('Admin/google_authenticator.html', 
                             error='[ Oops! Something went wrong... 🤷🏻‍♂️]',
-                            user=admin_ssid)
+                            user=session["active_admin_ssid"])
 
         return render_template('Admin/google_authenticator.html', 
                             web_page_msg='Scan the QR Code and enter the oAuth code to Activate 2FA',
-                            user=admin_ssid)
+                            user=session["active_admin_ssid"])
     
     else: return redirect(url_for('admin_register'))
 
@@ -587,7 +556,7 @@ def authenticator_verification():
     else:
         return render_template('Admin/google_authenticator.html', 
                            error='[ Invalid Authentication Code. ]',
-                           user=admin_ssid)
+                           user=session["active_admin_ssid"])
 
 
 # ******************************************************** #
@@ -598,13 +567,11 @@ def admin_2FA():
 @http.route('/admin/login/2FA', methods=['POST'])
 def admin_2FA_form():
     global admin_2FA_code
-    global admin_login_status
 
     admin_2FA_code = pyotp.TOTP('3232323232323232')
     code = request.form['admin_2FA_code']
 
     if (str(code) == str(admin_2FA_code.now())):
-        admin_login_status = True
         return redirect(url_for('admin_dashboard'))
     
     else: return render_template('Admin/admin_2FA.html', validity='[ Wrong 2FA Code given ]')
@@ -623,16 +590,16 @@ def admin_pswd_reset_redirect_form():
     _db = sqlite3.connect('Database/kiit_kp_canteen.db')
     sql = _db.cursor()
 
-    admin_ssid = str(request.form['admin_ssid'])
+    session["active_admin_ssid"] = str(request.form['admin_ssid'])
 
     try:
         sql.execute("SELECT SSID FROM admin_logins")
         admin_ssid_s = sql.fetchone()[0]
 
-        if str(admin_ssid) in admin_ssid_s:
+        if str(session["active_admin_ssid"]) in admin_ssid_s:
             return redirect(url_for('admin_pswd_reset'))
         
-        elif str(admin_ssid) not in admin_ssid_s:
+        elif str(session["active_admin_ssid"]) not in admin_ssid_s:
             return render_template('Admin/pswd_reset_redirect.html',
                                validity='[ Invalid Admin SSID ]')
     
@@ -675,7 +642,8 @@ def admin_pswd_reset_form():
                                error='[ Password confirmation failed ]')
     
     else:
-        sql.execute(f"UPDATE admin_logins SET Password='{re_new_pswd}' WHERE SSID='{admin_ssid}'")
+        ssid = session["active_admin_ssid"]
+        sql.execute(f"UPDATE admin_logins SET Password='{re_new_pswd}' WHERE SSID={ssid}")
         _db.commit()
         
         return render_template('Admin/admin_password_reset.html',
@@ -686,9 +654,7 @@ def admin_pswd_reset_form():
 # ******************************************************** #
 @http.route('/admin/dashboard')
 def admin_dashboard():
-    global admin_login_status
-    
-    if admin_login_status is True:
+    if "active_admin_ssid" in session:
         return render_template('Admin/admin_dashboard.html',
                                web_page_msg=greeting())
     
@@ -698,10 +664,9 @@ def admin_dashboard():
 # ******************************************************** #
 @http.route('/admin/developer/database/database_file/view/student')
 def view_student_database():
-    global admin_login_status
     global website_error
 
-    if admin_login_status is True:
+    if "active_admin_ssid" in session:
         _db = sqlite3.connect('Database/kiit_kp_canteen.db')
 
         try:
@@ -725,12 +690,11 @@ def view_student_database():
 
 @http.route('/admin/developer/database/database_file/view/admin')
 def view_admin_database():
-    global admin_login_status
     global website_error
     
     _db = sqlite3.connect('Database/kiit_kp_canteen.db')
     
-    if admin_login_status is True:
+    if "active_admin_ssid" in session:
         login_details = read_database_file(_db, 'admin_logins', ['SSID', 'Passwoord', 'Email'])
         if type(login_details) is pandas.DataFrame:
             return render_template('Admin/admin_ADdatabase_viewer.html',
@@ -747,9 +711,7 @@ def view_admin_database():
 # ******************************************************** #
 @http.route('/admin/developer/database/database_file/edit')
 def edit_database():
-    global admin_login_status
-    
-    if admin_login_status is True:
+    if "active_admin_ssid" in session:
         return render_template('Admin/admin_database_editor.html', 
                                query_result='No query result(s)')
     
@@ -867,9 +829,7 @@ def database_editor():
 # ******************************************************** #
 @http.route('/admin/developer/database/logs/view')
 def admin_log_view():
-    global admin_login_status
-
-    if admin_login_status is True:
+    if "active_admin_ssid" in session:
         log_names = [name[:16] for name in os.listdir('Database/logs')]
 
         return render_template('Admin/admin_STlog_viewer.html', 
@@ -906,9 +866,8 @@ def admin_log_list():
 def admin_log_context_viewer(std_name):
     global website_error
     global std_log_details
-    global admin_login_status
 
-    if admin_login_status is True:
+    if "active_admin_ssid" in session:
         return render_template('Admin/log_context_viewer.html', 
                                 web_page_msg=greeting(),
                                 std_name=str(std_name),
@@ -919,10 +878,8 @@ def admin_log_context_viewer(std_name):
 
 # ******************************************************** #
 @http.route('/admin/developer/backend/error')
-def developer_error_page():
-    global admin_login_status
-    
-    if admin_login_status is True:
+def developer_error_page(): 
+    if "active_admin_ssid" in session:
         try:
             error_message = f'Error in {website_error[0]} function.\nError: {website_error[1]}'
             return render_template('Admin/admin_developer_error.html', dev_error_message=error_message)
@@ -935,10 +892,8 @@ def developer_error_page():
 
 # ******************************************************** #
 @http.route('/admin/developer/server_shutdown')
-def server_shutdown_2FA():
-    global admin_login_status
-    
-    if admin_login_status is True: return render_template('Admin/admin_2FA.html')
+def server_shutdown_2FA(): 
+    if "active_admin_ssid" in session: return render_template('Admin/admin_2FA.html')
     else: return redirect(url_for('admin_login'))
 
 @http.route('/admin/developer/server_shutdown', methods=['POST'])
