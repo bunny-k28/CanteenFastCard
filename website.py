@@ -243,7 +243,7 @@ def payment_form():
 
 
 # ******************************************************** #
-@http.route('/account/update/balance')
+@http.route('/account/balance/update')
 def update_account_balance():
     if "active_student_id" in session:
         return render_template('Student/update_amount.html', 
@@ -252,7 +252,7 @@ def update_account_balance():
         
     else: return redirect(url_for('home'))
 
-@http.route('/account/update/balance', methods=['POST'])
+@http.route('/account/balance/update', methods=['POST'])
 def update_account_balance_form():
     global website_error
     
@@ -286,7 +286,7 @@ def update_account_balance_form():
 
 
 # ******************************************************** #
-@http.route('/account/check_balance')
+@http.route('/account/balance/check')
 def check_balance():
     if "active_student_id" in session:
         _db = sqlite3.connect('Database/kiit_kp_canteen.db')
@@ -483,16 +483,15 @@ def admin_logout():
 
 
 # ******************************************************** #
-@http.route('/admin/login/register')
+@http.route('/admin/register')
 def admin_register():
     return render_template('Admin/admin_registration.html', 
                            web_page_msg=greeting(),
                            next_bool=False)
 
-@http.route('/admin/login/register', methods=['POST'])
+@http.route('/admin/register', methods=['POST'])
 def admin_register_form():
     global website_error
-    global admin_ssid, admin_login_status
     
     _db = sqlite3.connect('Database/kiit_kp_canteen.db')
     sql = _db.cursor()
@@ -547,7 +546,7 @@ def admin_register_form():
 @http.route('/admin/login/authentication')
 def authentication():
     global website_error
-    global admin_ssid, admin_2FA_code, admin_login_status
+    global admin_2FA_code
 
     if "active_admin_ssid" in session:
         admin_2FA_code = pyotp.TOTP('3232323232323232')
@@ -592,20 +591,20 @@ def admin_2FA_form():
     code = request.form['admin_2FA_code']
 
     if (str(code) == str(admin_2FA_code.now())):
-        return redirect(url_for('admin_dashboard'))
+        return redirect(url_for('admin_dashboard', admin=session["active_admin_ssid"]))
     
     else: return render_template('Admin/admin_2FA.html', validity='[ Wrong 2FA Code given ]')
 
 
 # ******************************************************** #
-@http.route('/admin/login/password-reset/redirector')
+@http.route('/admin/login/password-reset/verification')
 def admin_pswd_reset_redirector():
     return render_template('Admin/pswd_reset_redirect.html')
 
-@http.route('/admin/login/password-reset/redirector', methods=['POST'])
+@http.route('/admin/login/password-reset/verification', methods=['POST'])
 def admin_pswd_reset_redirect_form():
     global website_error
-    global admin_ssid, admin_2FA_code
+    global admin_2FA_code
 
     _db = sqlite3.connect('Database/kiit_kp_canteen.db')
     sql = _db.cursor()
@@ -630,15 +629,15 @@ def admin_pswd_reset_redirect_form():
 
 
 # ******************************************************** #
-@http.route('/admin/login/pswd-reset')
+@http.route('/admin/login/password-reset')
 def admin_pswd_reset():
     return render_template('Admin/admin_password_reset.html',
                            web_page_msg=greeting())
 
-@http.route('/admin/login/pswd-reset', methods=['POST'])
+@http.route('/admin/login/password-reset', methods=['POST'])
 def admin_pswd_reset_form():
     global website_error
-    global admin_ssid, admin_2FA_code
+    global admin_2FA_code
     
     admin_2FA_code = pyotp.TOTP('3232323232323232')
 
