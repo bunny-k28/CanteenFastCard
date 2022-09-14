@@ -255,9 +255,7 @@ def debit_balance(db: sqlite3.Connection, debit_amount: int, _id: int):
                 file.write(f'Bought item(s) of amount: Rs.{debit_amount}\n')
                 file.write(f'Amount left in amount: Rs.{final_amount}\n\n')
             
-            send_mail(db, _id, 'debit', debit_amount)
-
-            return final_amount
+            send_mail(db, _id, 'debit', (debit_amount, final_amount))
     
     except sqlite3.IntegrityError as IE: cprint(f'Failed to debit balance: {IE}', 'red', attrs=['bold'])
     finally: db.commit()
@@ -281,12 +279,14 @@ def update_balance(db: sqlite3.Connection, update_amount: int, _id: int):
         file.write(f'Amount deposited: Rs.{update_amount}\n')
         file.write(f'Total amount in account: Rs.{final_amount}\n\n')
 
+    send_mail(db, _id, 'update', (update_amount, final_amount))
+
     db.commit()
 
     return final_amount
 
 
-def send_mail(db: sqlite3.Connection, _id: int, mail_type: str, args=int):
+def send_mail(db: sqlite3.Connection, _id: int, mail_type: str, args=tuple):
     std_info = get_student_details(db, _id, 'std_info')
     pin_code = get_student_details(db, _id, 'pin_code')
     date = datetime.datetime.now().strftime('%d-%m-%Y')
@@ -412,8 +412,37 @@ Registered ID: {_id}
 Registered Name: {name}
 Registered Email: {std_email}
 
-This mail is sent to imform you that, Rs. {args} have been debited from your canteen account.
-If you're not familiar with the transaction report this to any of the the canteen employee.
+This mail is sent to imform you that, Rs. {args[0]} have been debited from your canteen account.
+Amount left in your account is Rs. {args[1]}.
+
+If you're not familiar with the transaction. Report this to any of the the canteen employee.
+
+If you want your transaction log file, please email your usid to the following email address: {HOST_SSID}.
+Your Log file will be sent to you within 24 Hours.
+
+[NOTE: If you want your transaction log file ASAP, you can scan your id card at the canteen.]
+
+Thank You!.
+KIIT KP Canteen
+"""
+
+    elif mail_type == 'update':
+        subject = "KIIT Polytechnic Canteen Deposite"
+
+        body = f"""This mail contains information about your canteen balance.
+Please go through the details.
+If you have any query(ies), please reply back your query(ies) to the following email address: {HOST_SSID}
+
+===============================================================
+
+Registered ID: {_id}
+Registered Name: {name}
+Registered Email: {std_email}
+
+This mail is sent to imform you that, Rs. {args[0]} has been deposited/updated into your canteen account.
+Total amount in your canteen account is Rs. {args[1]}.
+
+If you're not familiar with the deposite/update. Report this to any of the the canteen employee.
 
 If you want your transaction log file, please email your usid to the following email address: {HOST_SSID}.
 Your Log file will be sent to you within 24 Hours.
