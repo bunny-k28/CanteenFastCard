@@ -584,6 +584,14 @@ def authenticator_verification():
 
 
 # ******************************************************** #
+@http.route('/admin/login/authentication-AppInstall')
+def authenticator_install():
+    if "active_admin_ssid" in session:
+        return render_template('Admin/gAuth_app_download.html')
+
+    else: return redirect(url_for('admin_register'))
+
+# ******************************************************** #
 @http.route('/admin/login/2FA')
 def admin_2FA():
     return render_template('Admin/admin_2FA.html')
