@@ -782,21 +782,11 @@ def database_editor():
                 final_data += [d_val]
             
             return render_template('Admin/admin_database_editor.html',
-                                   query_result=final_data,
-                                   long_data=[])
-            
-        else:
-            final_data = {}
-            
-            select_index = query.index('SELECT')
-            from_index = query.index('FROM')
-            cols = query[select_index+1:from_index]
-            
-            for index, col in enumerate(cols):
-                final_data[col.removesuffix(',')] = data[0][index]
+                                   query_result=final_data)
 
-            return render_template('Admin/admin_database_editor.html',
-                                   long_data=final_data)  
+        else:
+            return render_template('Admin/admin_database_editor.html', 
+                                   long_data=data)  
 
     elif str(query_keywords[0]) == 'DELETE':
         _db = sqlite3.connect('Database/kiit_kp_canteen.db')
@@ -810,33 +800,16 @@ def database_editor():
             _db.close()
 
             return render_template('Admin/admin_database_editor.html',
-                    long_data=[],
                     query_result='Query\command successfully executed.')
 
         except Exception as E:
             website_error = ['database_editor web method', E]
             return render_template('Admin/admin_database_editor.html',
-                                   long_data=[], 
                                    page_error='[ Unable to execute the query. ]')
 
     elif str(query_keywords[0]) == 'UPDATE':
-        _db = sqlite3.connect('Database/kiit_kp_canteen.db')
-        _sql = _db.cursor()
-
-        try:
-            _sql.execute(query)
-            db.commit()
-            
-            _sql.close()
-            _db.close()
-
-            return render_template('Admin/admin_database_editor.html',
-                                   query_result='Data successfully updated.')
-
-        except Exception as E:
-            website_error = ['database_editor web method', E]
-            return render_template('Admin/admin_database_editor.html', 
-                                   page_error='[ Error updating database. ]')
+        return render_template('Admin/admin_database_editor.html',
+                            query_result='Update feature is not supported for now.')
 
     else:
         _db = sqlite3.connect('Database/kiit_kp_canteen.db')
