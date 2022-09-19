@@ -20,8 +20,8 @@ db = sqlite3.connect('Database/kiit_kp_canteen.db') # :memory:
 sql = db.cursor()
 
 # crearing the required tables
-sql.execute('CREATE TABLE IF NOT EXISTS student_info(id INTEGER PRIMARY KEY, usid UID, name NAME, email TEXT)')
-sql.execute('CREATE TABLE IF NOT EXISTS student_account(id INTEGER PRIMARY KEY, pin TEXT, amount INTEGER)')
+sql.execute('CREATE TABLE IF NOT EXISTS student_info(id INTEGER PRIMARY KEY, usid UID, student_name NAME, email TEXT)')
+sql.execute('CREATE TABLE IF NOT EXISTS student_account(id INTEGER PRIMARY KEY, pin_code TEXT, amount INTEGER)')
 sql.execute('CREATE TABLE IF NOT EXISTS admin_logins(SSID TEXT PRIMARY KEY, Password PASSWORD, Email TEXT)')
 
 db.commit()
@@ -810,6 +810,42 @@ def database_editor():
     elif str(query_keywords[0]) == 'UPDATE':
         return render_template('Admin/admin_database_editor.html',
                             query_result='Update feature is not supported for now.')
+
+    elif 'remove user' in query:
+        user_id = int(query_keywords[-1])
+
+        _db = sqlite3.connect('Database/kiit_kp_canteen.db')
+        _sql = _db.cursor()
+
+        try:
+            usid = get_student_details(_db, user_id, 'usid')
+            
+            try:
+                _sql.execute(f'DELETE FROM student_info WHERE id={int(user_id)}')
+                _sql.execute(f'DELETE FROM student_account WHERE id={int(user_id)}')
+            
+            except Exception as E:
+                website_error = ['database editor web method', E]
+                return render_template('Admin/admin_database_editor.html',
+                                   page_error=f'[ Unable to remove user with id={user_id} from databse file. ]')
+
+            try: os.remove(f"Database/logs/{usid}.txt")
+            except Exception as E:
+                website_error = ['database editor web method', E]
+                return render_template('Admin/admin_database_editor.html',
+                                   page_error=f'[ Unable to remove log of user with id={user_id}. ]')
+
+            return render_template('Admin/admin_database_editor.html',
+                                   query_result=f'User {user_id} successfully removed.')
+
+        except Exception as E:
+            website_error = ['database editor web method', E]
+            return render_template('Admin/admin_database_editor.html',
+                                   page_error=f'[ Unable to remove user with id={user_id}. ]')
+
+        finally: 
+            _sql.close()
+            _db.close()
 
     else:
         _db = sqlite3.connect('Database/kiit_kp_canteen.db')
