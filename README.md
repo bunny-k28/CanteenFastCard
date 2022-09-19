@@ -37,11 +37,11 @@
 
 #### [ There are 2 ways to register your ID card. One <u>automatic</u>, one <u>manual</u>. ]
 
-#### 1.1. In auto mode, when you'll scan your <b><i>ID card</i></b> or put your credentials manually. The website will automatically open the  <b><i>registration</i></b> form if the ID is <u><b>not registared</b></u>
+#### 1.1. In auto mode, when you'll scan your <b><i>ID card</i></b> or put your credentials manually. The website will automatically open the  <b><i>registration</i></b> form if the ID is <u><b>not registared</b></u>. After you'll fill up your details in the registration form, the canteen employee will enter the <b><i>Master Key</i></b> as per the verification process. Then you can click the `Register` button to register.
 ![](static/images/auto_register.jpg)
 <br>
 
-#### 1.3. In the manual mode, you have to manually register yourself by clicking on the `Register` button present in <u><b>the top right corner</b></u>.
+#### 1.3. In the manual mode, you have to manually register yourself by clicking on the `Register` button present in <u><b>the top right corner</b></u>. After you'll fill up your details in the registration form, the canteen employee will enter the <b><i>Master Key</i></b> as per the verification process. Then you can click the `Register` button to register.
 ![](static/images/manual_register.jpg)
 <br>
 
