@@ -214,7 +214,7 @@ def dashboard():
                             web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!', 
                             student_roll_no=str(session["active_student_id"]))
         
-    else: return redirect(url_for('home'))
+    else: return redirect(url_for('home', status='logged-out'))
 
 
 # ******************************************************** #
@@ -225,7 +225,7 @@ def payment():
                             web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!', 
                             student_roll_no=str(session["active_student_id"]))
     
-    else: return redirect(url_for('home'))
+    else: return redirect(url_for('home', status='logged-out'))
 
 @http.route('/account/payment', methods=['POST'])
 def payment_form():
@@ -272,7 +272,7 @@ def update_account_balance():
                             web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!', 
                             student_roll_no=str(session["active_student_id"]))
         
-    else: return redirect(url_for('home'))
+    else: return redirect(url_for('home', status='logged-out'))
 
 @http.route('/account/balance/update', methods=['POST'])
 def update_account_balance_form():
@@ -327,7 +327,7 @@ def check_balance():
                                student_roll_no=session["active_student_id"], 
                                amount=str(left_amount))
 
-    else: return redirect(url_for('home'))
+    else: return redirect(url_for('home', status='logged-out'))
 
 
 # ******************************************************** #
@@ -344,15 +344,17 @@ def view_log():
                 std_transaction_details = log_file.read()
                 
             return render_template('Student/log_viewer.html', 
-                                   web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
+                                   web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!', 
+                                   student_roll_no=str(session["active_student_id"]), 
                                    content=str(std_transaction_details))
         
         except Exception as E:
             website_error = ['view_log web method', E]
             return render_template('Student/dashboard.html', 
+                                   student_roll_no=str(session["active_student_id"]), 
                                    error="Oops... Something went wrong 🤷🏼‍♂️")
         
-    else: return redirect(url_for('home'))
+    else: return redirect(url_for('home', status='logged-out'))
 
 
 # ******************************************************** #
@@ -368,14 +370,17 @@ def send_transaction_log():
 
             send_mail(_db, int(session["active_student_id"]), 'log')
             return render_template('Student/transaction_log_sender.html', 
-                                   web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
+                                   web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!', 
+                                   student_roll_no=str(session["active_student_id"]),
                                    status=f"Log file Sent to {std_email}")
         
         except Exception as E:
             website_error = ['Sending Log (send_transaction_log web method)', E]
-            return render_template('Student/dashboard.html', alert_message="Oops... Something went wrong 🤷🏼‍♂️")
+            return render_template('Student/dashboard.html', 
+                                   student_roll_no=str(session["active_student_id"]),
+                                   alert_message="Oops... Something went wrong 🤷🏼‍♂️")
         
-    else: return redirect(url_for('home'))
+    else: return redirect(url_for('home', status='logged-out'))
 
 
 # ******************************************************** #
@@ -419,7 +424,7 @@ def update_account_pin_code():
                             web_page_msg=msg, 
                             student_roll_no=str(session["active_student_id"]))
 
-    else: return redirect(url_for('home'))
+    else: return redirect(url_for('home', status='logged-out'))
 
 @http.route('/account/update/pin_code/reset', methods=['POST'])
 def update_account_pin_code_form():
@@ -726,7 +731,7 @@ def admin_dashboard():
         return render_template('Admin/admin_dashboard.html',
                                web_page_msg=greeting())
     
-    else: return redirect(url_for('admin_login'))
+    else: return redirect(url_for('admin_login', status='logged-out'))
 
 
 # ******************************************************** #
@@ -754,7 +759,7 @@ def view_student_database():
             return render_template('Admin/admin_STdatabase_viewer.html', 
                                    page_error='Oops something went wrong 😬')
 
-    else: return redirect(url_for('admin_login'))
+    else: return redirect(url_for('admin_login', status='logged-out'))
 
 @http.route('/admin/developer/database/database_file/view/admin')
 def view_admin_database():
@@ -773,7 +778,7 @@ def view_admin_database():
             return render_template('Admin/admin_ADdatabase_viewer.html',
                                    page_error='Unable to show admin database.')
 
-    else: return redirect(url_for('admin_login'))
+    else: return redirect(url_for('admin_login', status='logged-out'))
 
 
 # ******************************************************** #
@@ -783,7 +788,7 @@ def edit_database():
         return render_template('Admin/admin_database_editor.html', 
                                query_result='No query result(s)')
     
-    else: return redirect(url_for('admin_login'))
+    else: return redirect(url_for('admin_login', status='logged-out'))
 
 @http.route('/admin/developer/database/database_file/edit', methods=['POST'])
 def database_editor():
@@ -913,7 +918,7 @@ def admin_log_view():
                                 web_page_msg=greeting(),
                                 logs=log_names)
 
-    else: return redirect(url_for('admin_login'))
+    else: return redirect(url_for('admin_login', status='logged-out'))
     
 @http.route('/admin/developer/database/logs/view', methods=['POST'])
 def admin_log_list():
@@ -950,7 +955,7 @@ def admin_log_context_viewer(std_name):
                                 std_name=str(std_name),
                                 log_details=str(std_log_details))
     
-    else: return redirect(url_for('admin_login'))
+    else: return redirect(url_for('admin_login', status='logged-out'))
 
 
 # ******************************************************** #
@@ -964,14 +969,14 @@ def developer_error_page():
         except Exception:
             return render_template('Admin/admin_developer_error.html', dev_error_message='No Error Found Yet')
 
-    else: return redirect(url_for('admin_login'))
+    else: return redirect(url_for('admin_login', status='logged-out'))
 
 
 # ******************************************************** #
 @http.route('/admin/developer/server_shutdown')
 def server_shutdown_2FA(): 
     if "active_admin_ssid" in session: return render_template('Admin/admin_2FA.html')
-    else: return redirect(url_for('admin_login'))
+    else: return redirect(url_for('admin_login', status='logged-out'))
 
 @http.route('/admin/developer/server_shutdown', methods=['POST'])
 def server_shutdown_2FA_form():
