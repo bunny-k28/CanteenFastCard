@@ -74,12 +74,12 @@
 
 ### 1. Payment
 ![](static/images/pay.jpg)
-#### As you can see in the above image, you just have to enter the <b>total amount</b> of the bought item(S) and click the `Pay Amount` button.
+#### As you can see in the above image, you just have to enter the <b>total amount</b> of the bought item(S) and then the canteen employee will enter the master key as per the verification process. Then click the `Pay Amount` button.
 <br>
 
 ### 2. Update
 ![](static/images/update.jpg)
-#### As you can see in the above image, you just have to enter the amount you want to update into your account and click the `Update Balance` button.
+#### As you can see in the above image, you just have to enter the amount you want to update/deposite into your account and then the canteen employee will enter the master key as per the verification process. Then click the `Update Balance` button.
 <br>
 
 ### 3. Check
