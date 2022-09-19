@@ -20,8 +20,8 @@ db = sqlite3.connect('Database/kiit_kp_canteen.db') # :memory:
 sql = db.cursor()
 
 # crearing the required tables
-sql.execute('CREATE TABLE IF NOT EXISTS student_info(id INTEGER PRIMARY KEY, usid UID, student_name NAME, email TEXT)')
-sql.execute('CREATE TABLE IF NOT EXISTS student_account(id INTEGER PRIMARY KEY, pin_code TEXT, amount INTEGER)')
+sql.execute('CREATE TABLE IF NOT EXISTS student_info(id INTEGER PRIMARY KEY, usid UID, name NAME, email TEXT)')
+sql.execute('CREATE TABLE IF NOT EXISTS student_account(id INTEGER PRIMARY KEY, pin TEXT, amount INTEGER)')
 sql.execute('CREATE TABLE IF NOT EXISTS admin_logins(SSID TEXT PRIMARY KEY, Password PASSWORD, Email TEXT)')
 
 db.commit()
