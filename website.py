@@ -6,6 +6,7 @@ import os
 import pyotp
 import pandas
 import sqlite3
+from datetime import timedelta
 
 from flask import Flask, url_for, redirect, render_template, request, session
 from dotenv import load_dotenv
@@ -36,6 +37,8 @@ HOST = os.environ.get('HOST')
 DEBUG = os.environ.get('DEBUG')
 
 MASTER_2FA_EMAIL = os.environ.get('MASTER_2FA_EMAIL')
+MASTER_PRODUCT_KEY = os.environ.get('MASTER_PRODUCT_KEY')
+MASTER_PROCESS_KEY = os.environ.get('MASTER_PROCESS_KEY')
 
 
 # global variables
@@ -46,6 +49,7 @@ admin_2FA_code = pyotp.TOTP
 
 http = Flask(__name__)
 http.secret_key = '3d9efc4wa651728'
+http.permanent_session_lifetime = timedelta(minutes=3)
 
 
 
@@ -129,27 +133,33 @@ def auto_id_registration_form():
     email = request.form['email']
     id_pin_code = request.form['pin_code']
     init_amount = request.form['initial_amount']
+    master_key = int(request.form['master_product_key'])
     
-    if len(id_pin_code) < 4:
+    if master_key != int(MASTER_PRODUCT_KEY):
         return render_template('Student/auto_id_registration.html', 
-                               alert_message='[ Pin Code too short! ]')
-
-    elif int(init_amount) < 30:
-        return render_template('Student/auto_id_registration.html', 
-                                alert_message='[ Minimum amount required is Rs.30]')
+                               alert_message='Invalid Master Product Key.')
 
     else:
-        try:
-            register_student(_db, int(session["active_student_id"]), id_pin_code,
-                            int(init_amount), [name, email])
-            
-            return redirect(url_for('dashboard', user=str(session["active_student_id"])))
-
-        except Exception as E:
-            
-            website_error = ['register', E]
+        if len(id_pin_code) < 4:
             return render_template('Student/auto_id_registration.html', 
-                                alert_message='[ Unable to register this ID ]')
+                                alert_message='[ Pin Code too short! ]')
+
+        elif int(init_amount) < 30:
+            return render_template('Student/auto_id_registration.html', 
+                                    alert_message='[ Minimum amount required is Rs.30]')
+
+        else:
+            try:
+                register_student(_db, int(session["active_student_id"]), id_pin_code,
+                                int(init_amount), [name, email])
+                
+                return redirect(url_for('dashboard', user=str(session["active_student_id"])))
+
+            except Exception as E:
+                
+                website_error = ['register', E]
+                return render_template('Student/auto_id_registration.html', 
+                                    alert_message='[ Unable to register this ID ]')
 
 
 # ******************************************************** #
@@ -168,26 +178,32 @@ def manual_id_registration_form():
     email = request.form['email']
     id_pin_code = request.form['pin_code']
     init_amount = request.form['initial_amount']
+    master_key = int(request.form['master_product_key'])
     
-    if len(id_pin_code) < 4:
+    if master_key != int(MASTER_PRODUCT_KEY):
         return render_template('Student/manual_id_registration.html', 
-                               alert_message='[ Pin Code too short! ]')
-    
-    elif int(init_amount) < 30:
-        return render_template('Student/manual_id_registration.html', 
-                                alert_message='[ Minimum amount required is Rs.30]')
-    
-    else:
-        try:
-            register_student(_db, int(session["active_student_id"]), id_pin_code,
-                            int(init_amount), [name, email])
-            
-            return redirect(url_for('dashboard', user=str(session["active_student_id"])))
+                               alert_message='Invalid Master Product Key.')
 
-        except Exception as E:
-            website_error = ['register', E]
+    else:
+        if len(id_pin_code) < 4:
             return render_template('Student/manual_id_registration.html', 
-                                alert_message='[ Unable to register this ID ]')
+                                alert_message='[ Pin Code too short! ]')
+        
+        elif int(init_amount) < 30:
+            return render_template('Student/manual_id_registration.html', 
+                                    alert_message='[ Minimum amount required is Rs.30]')
+        
+        else:
+            try:
+                register_student(_db, int(session["active_student_id"]), id_pin_code,
+                                int(init_amount), [name, email])
+                
+                return redirect(url_for('dashboard', user=str(session["active_student_id"])))
+
+            except Exception as E:
+                website_error = ['register', E]
+                return render_template('Student/manual_id_registration.html', 
+                                    alert_message='[ Unable to register this ID ]')
 
 
 # ******************************************************** #
@@ -218,28 +234,34 @@ def payment_form():
     _db = sqlite3.connect('Database/kiit_kp_canteen.db')
     
     amount_to_pay = request.form['amount_to_pay']
+    master_product_key = int(request.form['master_product_key'])
     std_amount = get_student_details(_db, int(session["active_student_id"]), 'amount')
 
-    if int(amount_to_pay) > int(std_amount):
-        return render_template('Student/payment.html', 
-                               web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
-                               student_roll_no=str(session["active_student_id"]),
-                               debit_status=f'⚠️Amount in account is less: ₹{std_amount}')
+    if int(MASTER_PRODUCT_KEY) != int(master_product_key):
+        return render_template('Student/payment.html',
+                               debit_status='❌Invalid Master Product Key.')
 
     else:
-        try:
-            debit_balance(_db, int(amount_to_pay), int(session["active_student_id"]))
+        if int(amount_to_pay) > int(std_amount):
             return render_template('Student/payment.html', 
                                 web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
                                 student_roll_no=str(session["active_student_id"]),
-                                debit_status='✅')
+                                debit_status=f'⚠️Amount in account is less: ₹{std_amount}')
 
-        except Exception as E:
-            website_error = ['payment form', E]
-            return render_template('Student/payment.html', 
-                                web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
-                                student_roll_no=str(session["active_student_id"]), 
-                                debit_status='❌')
+        else:
+            try:
+                debit_balance(_db, int(amount_to_pay), int(session["active_student_id"]))
+                return render_template('Student/payment.html', 
+                                    web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
+                                    student_roll_no=str(session["active_student_id"]),
+                                    debit_status='✅')
+
+            except Exception as E:
+                website_error = ['payment form', E]
+                return render_template('Student/payment.html', 
+                                    web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
+                                    student_roll_no=str(session["active_student_id"]), 
+                                    debit_status='❌Failed to do the payment process.')
 
 
 # ******************************************************** #
@@ -257,32 +279,40 @@ def update_account_balance_form():
     global website_error
     
     _db = sqlite3.connect('Database/kiit_kp_canteen.db')
+    
     amount_to_update = request.form['amount_to_update']
-    if int(amount_to_update) < 0:
+    master_product_key = int(request.form['master_product_key'])
+    
+    if int(MASTER_PRODUCT_KEY) != int(master_product_key):
         return render_template('Student/update_amount.html', 
-                               web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
-                               student_roll_no=str(session["active_student_id"]),
-                               update_status='⚠️Invalid amount.')
-
-    elif int(amount_to_update) == 0:
-        return render_template('Student/update_amount.html', 
-                               web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
-                               student_roll_no=str(session["active_student_id"]))
+                               update_status='❌Invalid Master Product Key.')
 
     else:
-        try:
-            update_balance(_db, int(amount_to_update), int(session["active_student_id"]))
+        if int(amount_to_update) < 0:
             return render_template('Student/update_amount.html', 
                                 web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
                                 student_roll_no=str(session["active_student_id"]),
-                                update_status='✅')
-        
-        except Exception as E:
-            website_error = ['payment form', E]
+                                update_status='⚠️Invalid amount.')
+
+        elif int(amount_to_update) == 0:
             return render_template('Student/update_amount.html', 
                                 web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
-                                student_roll_no=str(session["active_student_id"]),
-                                update_status='❌')
+                                student_roll_no=str(session["active_student_id"]))
+
+        else:
+            try:
+                update_balance(_db, int(amount_to_update), int(session["active_student_id"]))
+                return render_template('Student/update_amount.html', 
+                                    web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
+                                    student_roll_no=str(session["active_student_id"]),
+                                    update_status='✅')
+            
+            except Exception as E:
+                website_error = ['payment form', E]
+                return render_template('Student/update_amount.html', 
+                                    web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!',
+                                    student_roll_no=str(session["active_student_id"]),
+                                    update_status='❌Unable to update the account balance.')
 
 
 # ******************************************************** #
@@ -505,46 +535,52 @@ def admin_register_form():
     EMAIL = request.form['email']
     PSWD = request.form['new_password']
     C_PSWD = request.form['confirm_password']
+    MASTER_KEY = request.form['master_key']
     
-    sql.execute(f"SELECT SSID FROM admin_logins")
-    ssid_s = sql.fetchall()
-
-    admin_ssid_s = []
-
-    for ssid in ssid_s:
-        admin_ssid_s += [ssid[0]]
-    
-    if session["active_admin_ssid"] in admin_ssid_s:
+    if MASTER_KEY != MASTER_PROCESS_KEY:
         return render_template('Admin/admin_registration.html', 
-                               error='[ SSID already in use. ]',
-                               status="❌",
-                               next_bool=False)
-    
-    elif PSWD != C_PSWD:
-        return render_template('Admin/admin_registration.html',
-                               error='[ Wrong confirmation password. ]',
-                               status="❌",
-                               next_bool=False)
-        
-    elif (len(PSWD) < 4) and (len(C_PSWD) < 4):
-        return render_template('Admin/admin_registration.html',
-                               error='[ Password too short. ]',
-                               status="❌",
-                               next_bool=False)
-    
+                               error='Invalid Process Key')
+
     else:
-        register_status = register_admin(_db, session["active_admin_ssid"], PSWD, EMAIL)
-        if register_status is True:
+        sql.execute(f"SELECT SSID FROM admin_logins")
+        ssid_s = sql.fetchall()
+
+        admin_ssid_s = []
+
+        for ssid in ssid_s:
+            admin_ssid_s += [ssid[0]]
+        
+        if session["active_admin_ssid"] in admin_ssid_s:
+            return render_template('Admin/admin_registration.html', 
+                                error='[ SSID already in use. ]',
+                                status="❌",
+                                next_bool=False)
+        
+        elif PSWD != C_PSWD:
             return render_template('Admin/admin_registration.html',
-                                   web_page_msg2='Registered, click `NEXT` to authenticate account.',
-                                   status='✅',
-                                   next_bool=True)
+                                error='[ Wrong confirmation password. ]',
+                                status="❌",
+                                next_bool=False)
             
-        else:
-            website_error = ['admin registration', register_status]
+        elif (len(PSWD) < 4) and (len(C_PSWD) < 4):
             return render_template('Admin/admin_registration.html',
-                                   error='[ Registration Failed. ]',
-                                   next_bool=False)
+                                error='[ Password too short. ]',
+                                status="❌",
+                                next_bool=False)
+        
+        else:
+            register_status = register_admin(_db, session["active_admin_ssid"], PSWD, EMAIL)
+            if register_status is True:
+                return render_template('Admin/admin_registration.html',
+                                    web_page_msg2='Registered, click `NEXT` to authenticate account.',
+                                    status='✅',
+                                    next_bool=True)
+                
+            else:
+                website_error = ['admin registration', register_status]
+                return render_template('Admin/admin_registration.html',
+                                    error='[ Registration Failed. ]',
+                                    next_bool=False)
 
 
 # ******************************************************** #

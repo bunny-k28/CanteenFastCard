@@ -60,13 +60,12 @@
             <form method="post">
                 <div class="mb-3 mt-5">
 
-                    <br>
-
                     <label class="text-body">
                         <b>
                             <h5>Student Name</h5>
                         </b>
                     </label>
+
                     <input type="text" class="form-control" 
                     name='std_name' placeholder="Your Full Name" required>
                 </div>
@@ -77,6 +76,7 @@
                             <h5>Personal Email-ID</h5>
                         </b>
                     </label>
+
                     <input type="email" class="form-control" name='email' 
                     placeholder="xyz@example.com" aria-label="Email ID" 
                     aria-describedby="addon-wrapping" required>
@@ -90,10 +90,13 @@
                     </label>
 
                     <div class="row g-3">
-                        <div class="col-3">
-                            <input type="number" class="form-control" name='std_roll_no'
-                                placeholder="your college ID/Roll No." aria-label="Student ID"
-                                aria-describedby="addon-wrapping" required>
+
+                        <div class="col-auto">
+                            <label class="text-body">
+                                <b>
+                                    <h5>•Pin Code</h5>
+                                </b>
+                            </label>
                         </div>
 
                         <div class="col-3">
@@ -103,17 +106,67 @@
                         </div>
 
                         <div class="col-3">
+                            <input type="password" class="form-control" name='pin_code'
+                                placeholder="Create new Pin-code (min 4 charecters)" 
+                                aria-label="Password" aria-describedby="addon-wrapping" required>
+                        </div>
+                    </div>
+
+                    <br>
+
+                    <div class="row g-">
+
+                        <div class="col-auto">
+                            <label class="text-body">
+                                <b>
+                                    <h5>•Roll No.</h5>
+                                </b>
+                            </label>
+                        </div>
+
+                        <div class="col-3">
+                            <input type="number" class="form-control" name='std_roll_no'
+                                placeholder="your college ID/Roll No." aria-label="Student ID"
+                                aria-describedby="addon-wrapping" required>
+                        </div>
+
+                        <div class="vr" style="padding: 0.1%; height: 1cm;"></div>
+
+                        <div class="col-3">
                             <div class="input-group mb-3">
                                 <span class="input-group-text">₹</span>
                                 <input type="number" class="form-control" name="initial_amount"
                                     placeholder="Enter Initial/Opening Amount" required>
                             </div>
                         </div>
+                    </div>
+
+                </div>
+
+                <div class="mb-3 mt-2">
+
+                    <label class="text-body">
+                        <b>
+                            <h4>Account Activation</h4>
+                        </b>
+                    </label>
+
+                    <div class="row g-3">
+
+                        <div class="col-3">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">🔑</span>
+                                <input type="password" class="form-control" name="master_product_key"
+                                    placeholder="Master Product Key" required>
+                            </div>
+                        </div>
+
+                        <div class="col-3">
+                            <button type="submit" class="btn btn-primary">Register</button>
+                        </div>
 
                     </div>
                 </div>
-
-                <button type="submit" class="btn btn-primary btn-lg mb-3">Register</button><br>
             </form>
         </div>
     </div>
