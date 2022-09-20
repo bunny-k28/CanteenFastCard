@@ -6,7 +6,6 @@ import os
 import pyotp
 import pandas
 import sqlite3
-from datetime import timedelta
 
 from flask import Flask, url_for, redirect, render_template, request, session
 from dotenv import load_dotenv
@@ -49,7 +48,6 @@ admin_2FA_code = pyotp.TOTP
 
 http = Flask(__name__)
 http.secret_key = '3d9efc4wa651728'
-http.permanent_session_lifetime = timedelta(minutes=3)
 
 
 
@@ -207,13 +205,13 @@ def manual_id_registration_form():
 
 
 # ******************************************************** #
-@http.route('/dashboard/')
-def dashboard():
+@http.route('/dashboard/<user>')
+def dashboard(user):
     if "active_student_id" in session:
         return render_template('Student/dashboard.html', 
-                            web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!', 
-                            student_roll_no=str(session["active_student_id"]))
-        
+                            web_page_msg=f'Hey there: {user}. Welcome!', 
+                            student_roll_no=user)
+
     else: return redirect(url_for('home', status='logged-out'))
 
 
