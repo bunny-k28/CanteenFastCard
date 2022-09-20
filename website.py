@@ -399,7 +399,7 @@ def twoFA_form():
         
         try:
             send_mail(_db, int(session["active_student_id"]), '2FA', twoFA_code)
-            return redirect(url_for('update_account_pin_code'))
+            return redirect(url_for('pin_code_reset'))
         
         except Exception as E:
             website_error = ['2FA Form', E]
@@ -411,7 +411,7 @@ def twoFA_form():
 
 # ******************************************************** #
 @http.route('/account/update/pin_code/reset')
-def update_account_pin_code():
+def pin_code_reset():
     if "active_student_id" in session:
         _db = sqlite3.connect('Database/kiit_kp_canteen.db')
         
@@ -425,7 +425,7 @@ def update_account_pin_code():
     else: return redirect(url_for('home', status='logged-out'))
 
 @http.route('/account/update/pin_code/reset', methods=['POST'])
-def update_account_pin_code_form():
+def pin_code_reset_form():
     global website_error
     global twoFA_code
     
@@ -435,44 +435,45 @@ def update_account_pin_code_form():
     new_pin_code = request.form['new_pin_code']
     confirm_pin_code = request.form['confirm_pin_code']
     
-    if str(user_2FA) == str(twoFA_code):
-        if str(new_pin_code) == str(confirm_pin_code):
-            if (str(new_pin_code).__len__() < 4) and (str(confirm_pin_code).__len__() < 4):
-                sql = _db.cursor()
-
-                try:
-                    sql.execute(f'''UPDATE student_account 
-                                SET pin_code = {str(confirm_pin_code)} 
-                                WHERE id={int(session["active_student_id"])};''')
-                    _db.commit()
-
-                    send_mail(_db, int(session["active_student_id"]), 'pin_code_update', confirm_pin_code)
-                    
-                    return render_template('Student/pin_code_reset.html', 
-                                            student_roll_no=str(session["active_student_id"]),
-                                            web_page_msg='Pin-Code successfully changed. Now you can login.')
-                    
-                except Exception as E:
-                    std_email = get_student_details(_db, int(session["active_student_id"]), 'email')
-                    msg = f'The 2FA code has been sent to {std_email}'
-                    website_error = ['Resetting user PIN code', E]
-
-                    return render_template('Student/pin_code_reset.html', 
-                            web_page_msg=msg, 
-                            student_roll_no=str(session["active_student_id"]),
-                            status='❌')
-
-            else: return render_template('Student/pin_code_reset.html', 
-                                    student_roll_no=str(session["active_student_id"]),
-                                    error='Pin Code too short. Min 4 char')
-
-        else: return render_template('Student/pin_code_reset.html', 
-                                    student_roll_no=str(session["active_student_id"]),
-                                    error='Incorrect Pin Confirmation')
-        
-    else: return render_template('pin_code_reset.html', 
+    if str(user_2FA) != str(twoFA_code):
+        return render_template('pin_code_reset.html', 
                                 student_roll_no=str(session["active_student_id"]),
                                 error='Incorrect 2FA Code')
+        
+    if str(new_pin_code) != str(confirm_pin_code):
+        return render_template('Student/pin_code_reset.html', 
+                                student_roll_no=str(session["active_student_id"]),
+                                error='Incorrect Pin Confirmation')
+
+    if ((str(new_pin_code).__len__() < 4) == True) and ((str(confirm_pin_code).__len__() < 4) == True):
+        return render_template('Student/pin_code_reset.html', 
+                                student_roll_no=str(session["active_student_id"]),
+                                error='Pin Code too short. Min 4 char')
+    
+    else:
+        sql = _db.cursor()
+
+        try:
+            sql.execute(f'''UPDATE student_account 
+                        SET pin_code = {str(confirm_pin_code)} 
+                        WHERE id={int(session["active_student_id"])};''')
+            _db.commit()
+
+            send_mail(_db, int(session["active_student_id"]), 'pin_code_update', confirm_pin_code)
+            
+            return render_template('Student/pin_code_reset.html', 
+                                    student_roll_no=str(session["active_student_id"]),
+                                    web_page_msg='Pin-Code successfully changed. Now you can login.')
+            
+        except Exception as E:
+            std_email = get_student_details(_db, int(session["active_student_id"]), 'email')
+            msg = f'The 2FA code has been sent to {std_email}'
+            website_error = ['Resetting user PIN code', E]
+
+            return render_template('Student/pin_code_reset.html', 
+                    web_page_msg=msg, 
+                    student_roll_no=str(session["active_student_id"]),
+                    status='❌')
 
 
 
