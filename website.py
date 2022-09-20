@@ -724,11 +724,12 @@ def admin_pswd_reset_form():
 
 
 # ******************************************************** #
-@http.route('/admin/dashboard')
-def admin_dashboard():
+@http.route('/admin/dashboard/<admin>')
+def admin_dashboard(admin):
     if "active_admin_ssid" in session:
         return render_template('Admin/admin_dashboard.html',
-                               web_page_msg=greeting())
+                               web_page_msg=greeting(),
+                               admin=admin)
     
     else: return redirect(url_for('admin_login', status='logged-out'))
 
