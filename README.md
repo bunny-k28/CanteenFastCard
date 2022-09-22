@@ -26,6 +26,8 @@
         1. HOST_KEY -> app password of service Email account
         2. HOST_SSID -> service Email account, for sending emails and 2FA codes
         3. MASTER_2FA_EMAIL -> a master email address for admin access work (like:- shutting down server, etc)
+        4. MASTER_PRODUCT_KEY -> for registration verification process
+        5. MASTER_PROCESS_KEY -> for transaction verification process
 
 ### 5. After all these operations, your program is ready to run. Just open your <b><i>CMD/PowerShell/Terminal</i></b> inside the project directory and type ```py .\website.py```.
 ![](static/images/terminal.jpg)
