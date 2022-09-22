@@ -7,12 +7,16 @@ def files():
                      'Database/logs', 
                      'Database/kiit_kp_canteen.db',  
                      'Database/log_file_names.txt', 
-                     'Database/preparing_errors.txt', 
                      'Database/website_info.env']
 
-    os.mkdir('Database')
+    try: os.mkdir('Database')
+    except OSError: pass
     
-    for file in files_and_dir:
+    for file in files_and_dir[0:2]:
+        try: os.mkdir(file)
+        except Exception: pass
+
+    for file in files_and_dir[2:]:
         try: open(file, 'x').close()
         except Exception: open(file, 'w').close()
     
@@ -26,10 +30,12 @@ def files():
         env_file.write('SMTP_SERVER = "smtp.gmail.com"\n')
         env_file.write('SERVER_PORT = "465"\n')
         env_file.write("HOST_KEY = 'app password'\n")
-        env_file.write("HOST_SSID = 'service email'\n")
+        env_file.write("HOST_SSID = 'service email'\n\n")
 
-        env_file.write("# ADMIN EMAIL\n")
+        env_file.write("# MASTER VARIABLES\n")
         env_file.write('MASTER_2FA_EMAIL = "master email ID"\n')
+        env_file.write('MASTER_PRODUCT_KEY = "master product key"\n')
+        env_file.write('MASTER_PROCESS_KEY = "master process key"\n')
 
 
 def libs():
@@ -44,12 +50,21 @@ def libs():
 
     for module in modules:
         try: cle(f'pip install {module}')
-        except Exception as E: 
-            with open('Database/prepareing_errors.txt', 'a') as error_file:
-                error_file.write(f'{E}\n')
+        except Exception: print(f'Could not install {module}')
 
 
 input = input('Prepare: ')
-if input in ('dir', 'files'): files()
-elif input in ('env', 'libs', 'modules'): libs()
-elif input == 'dir, libs': dir(); libs()
+if input in ('dir', 'files'): 
+    print('Preparing all files and directories...', end='')
+    files()
+    print('✅')
+
+elif input in ('libs', 'modules'): 
+    print('Preparing all libraries and modules...', end='')
+    libs()
+    print('✅')
+
+elif input == 'env': 
+    print('Preparing your environment...', end='')
+    files(); libs()
+    print('✅')
