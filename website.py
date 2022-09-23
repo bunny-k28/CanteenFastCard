@@ -984,9 +984,8 @@ def admin_log_context_viewer(std_name):
 def developer_error_page(): 
     if "active_admin_ssid" in session:
         try:
-            error_message = f'Error in {website_error[0]} function.\nError: {website_error[1]}'
             return render_template('Admin/admin_developer_error.html', 
-                                   dev_error_message=error_message,
+                                   error_stack=website_error,
                                    admin=session["active_admin_ssid"])
         
         except Exception:
