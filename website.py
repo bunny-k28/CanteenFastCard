@@ -615,7 +615,7 @@ def authenticator_verification():
 
     gAuth_otp = request.form['gAuth']
     if (str(gAuth_otp) == str(admin_2FA_code.now())):
-        return redirect(url_for("admin_dashboard"))
+        return redirect(url_for("admin_dashboard", admin=session["active_admin_ssid"]))
     
     else:
         return render_template('Admin/google_authenticator.html', 
@@ -751,13 +751,15 @@ def view_student_database():
 
             return render_template('Admin/admin_STdatabase_viewer.html', 
                                     student_account_info=std_acnt_data,
-                                    student_info=std_info_data)
+                                    student_info=std_info_data,
+                                    admin=session["active_admin_ssid"])
             
         except Exception as E:
             website_error = ['reading the database (view_student_database web method)', E]
             
             return render_template('Admin/admin_STdatabase_viewer.html', 
-                                   page_error='Oops something went wrong 😬')
+                                   page_error='Oops something went wrong 😬',
+                                   admin=session["active_admin_ssid"])
 
     else: return redirect(url_for('admin_login', status='logged-out'))
 
@@ -771,12 +773,14 @@ def view_admin_database():
         login_details = read_database_file(_db, 'admin_logins', ['SSID', 'Passwoord', 'Email'])
         if type(login_details) is pandas.DataFrame:
             return render_template('Admin/admin_ADdatabase_viewer.html',
-                                   admin_login_details=login_details)
+                                   admin_login_details=login_details,
+                                   admin=session["active_admin_ssid"])
         
         elif type(login_details) is Exception:
             website_error = ['view_admin_database web method', login_details]
             return render_template('Admin/admin_ADdatabase_viewer.html',
-                                   page_error='Unable to show admin database.')
+                                   page_error='Unable to show admin database.',
+                                   admin=session["active_admin_ssid"])
 
     else: return redirect(url_for('admin_login', status='logged-out'))
 
@@ -786,7 +790,8 @@ def view_admin_database():
 def edit_database():
     if "active_admin_ssid" in session:
         return render_template('Admin/admin_database_editor.html', 
-                               query_result='No query result(s)')
+                                query_result='No query result(s)',
+                                admin=session["active_admin_ssid"])
     
     else: return redirect(url_for('admin_login', status='logged-out'))
 
@@ -811,11 +816,13 @@ def database_editor():
         except Exception as E:
             website_error = ['database_editor web method', E]
             return render_template('Admin/admin_database_editor.html', 
-                                   query_result='No data available to show.')
+                                   query_result='No data available to show.',
+                                   admin=session["active_admin_ssid"])
 
         if query_keywords[1] == '*':
             return render_template('Admin/admin_database_editor.html', 
-                                   long_data=data)
+                                   long_data=data,
+                                   admin=session["active_admin_ssid"])
             
         elif (query_keywords[1] == '*') and ('WHERE' in query_keywords):
             final_data = []
@@ -823,11 +830,13 @@ def database_editor():
                 final_data += [d_val]
             
             return render_template('Admin/admin_database_editor.html',
-                                   query_result=final_data)
+                                   query_result=final_data,
+                                   admin=session["active_admin_ssid"])
 
         else:
             return render_template('Admin/admin_database_editor.html', 
-                                   long_data=data)  
+                                   long_data=data,
+                                   admin=session["active_admin_ssid"])  
 
     elif str(query_keywords[0]) == 'DELETE':
         _db = sqlite3.connect('Database/kiit_kp_canteen.db')
@@ -841,16 +850,19 @@ def database_editor():
             _db.close()
 
             return render_template('Admin/admin_database_editor.html',
-                    query_result='Query\command successfully executed.')
+                    query_result='Query\command successfully executed.',
+                    admin=session["active_admin_ssid"])
 
         except Exception as E:
             website_error = ['database_editor web method', E]
             return render_template('Admin/admin_database_editor.html',
-                                   page_error='[ Unable to execute the query. ]')
+                                   page_error='[ Unable to execute the query. ]',
+                                   admin=session["active_admin_ssid"])
 
     elif str(query_keywords[0]) == 'UPDATE':
         return render_template('Admin/admin_database_editor.html',
-                            query_result='Update feature is not supported for now.')
+                            query_result='Update feature is not supported for now.',
+                            admin=session["active_admin_ssid"])
 
     elif 'remove user' in query:
         user_id = int(query_keywords[-1])
@@ -868,21 +880,25 @@ def database_editor():
             except Exception as E:
                 website_error = ['database editor web method', E]
                 return render_template('Admin/admin_database_editor.html',
-                                   page_error=f'[ Unable to remove user with id={user_id} from databse file. ]')
+                                   page_error=f'[ Unable to remove user with id={user_id} from databse file. ]',
+                                   admin=session["active_admin_ssid"])
 
             try: os.remove(f"Database/logs/{usid}.txt")
             except Exception as E:
                 website_error = ['database editor web method', E]
                 return render_template('Admin/admin_database_editor.html',
-                                   page_error=f'[ Unable to remove log of user with id={user_id}. ]')
+                                   page_error=f'[ Unable to remove log of user with id={user_id}. ]',
+                                   admin=session["active_admin_ssid"])
 
             return render_template('Admin/admin_database_editor.html',
-                                   query_result=f'User {user_id} successfully removed.')
+                                   query_result=f'User {user_id} successfully removed.',
+                                   admin=session["active_admin_ssid"])
 
         except Exception as E:
             website_error = ['database editor web method', E]
             return render_template('Admin/admin_database_editor.html',
-                                   page_error=f'[ Unable to remove user with id={user_id}. ]')
+                                   page_error=f'[ Unable to remove user with id={user_id}. ]',
+                                   admin=session["active_admin_ssid"])
 
         finally: 
             _sql.close()
@@ -900,12 +916,14 @@ def database_editor():
             _db.close()
             
             return render_template('Admin/admin_database_editor.html',
-                                   query_result='Query successfully executed.')
+                                   query_result='Query successfully executed.',
+                                   admin=session["active_admin_ssid"])
 
         except Exception as E:
             website_error = ['database_editor web method', E]
             return render_template('Admin/admin_database_editor.html',
-                                   page_error='[ Unable to execute query. ]')
+                                   page_error='[ Unable to execute query. ]',
+                                   admin=session["active_admin_ssid"])
 
 
 # ******************************************************** #
@@ -916,7 +934,8 @@ def admin_log_view():
 
         return render_template('Admin/admin_STlog_viewer.html', 
                                 web_page_msg=greeting(),
-                                logs=log_names)
+                                logs=log_names,
+                                admin=session["active_admin_ssid"])
 
     else: return redirect(url_for('admin_login', status='logged-out'))
     
@@ -940,7 +959,8 @@ def admin_log_list():
     except Exception as E:
         website_error = ['log context viewer', E]
         return render_template('Admin/admin_STlog_viewer.html', 
-                                error="[ Opps! Something's wrong. Can't read log file. ]")
+                                error="[ Opps! Something's wrong. Can't read log file. ]",
+                                admin=session["active_admin_ssid"])
 
 
 # ******************************************************** #
@@ -953,7 +973,8 @@ def admin_log_context_viewer(std_name):
         return render_template('Admin/log_context_viewer.html', 
                                 web_page_msg=greeting(),
                                 std_name=str(std_name),
-                                log_details=str(std_log_details))
+                                log_details=str(std_log_details),
+                                admin=session["active_admin_ssid"])
     
     else: return redirect(url_for('admin_login', status='logged-out'))
 
@@ -964,10 +985,14 @@ def developer_error_page():
     if "active_admin_ssid" in session:
         try:
             error_message = f'Error in {website_error[0]} function.\nError: {website_error[1]}'
-            return render_template('Admin/admin_developer_error.html', dev_error_message=error_message)
+            return render_template('Admin/admin_developer_error.html', 
+                                   dev_error_message=error_message,
+                                   admin=session["active_admin_ssid"])
         
         except Exception:
-            return render_template('Admin/admin_developer_error.html', dev_error_message='No Error Found Yet')
+            return render_template('Admin/admin_developer_error.html', 
+                                   dev_error_message='No Error Found Yet',
+                                   admin=session["active_admin_ssid"])
 
     else: return redirect(url_for('admin_login', status='logged-out'))
 
@@ -995,9 +1020,13 @@ def server_shutdown_2FA_form():
         
         except Exception as E:
             website_error = ['shutting down the server', E]
-            return render_template('Admin/admin_2FA.html', validity='Oops something went wrong 😬')
+            return render_template('Admin/admin_2FA.html', 
+                                   validity='Oops something went wrong 😬',
+                                   admin=session["active_admin_ssid"])
             
-    else: return render_template('Admin/admin_2FA.html', validity='[ Invalid 2FA Code ]')
+    else: return render_template('Admin/admin_2FA.html', 
+                                validity='[ Invalid 2FA Code ]',
+                                admin=session["active_admin_ssid"])
 
 
 
