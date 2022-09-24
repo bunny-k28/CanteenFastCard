@@ -1029,6 +1029,18 @@ def server_shutdown_2FA_form():
 
 
 
+# ****************************CommonLinks**************************** #
+# ******************************************************************* #
+@http.route('/CFC/feedback')
+def feedback():
+    return render_template('feedback.html')
+
+@http.route('/CFC/feedback', methods=['POST'])
+def feedback_form():
+    return render_template('feedback.html')
+
+
+
 if __name__ == '__main__':
 
     http.run(port=PORT, debug=DEBUG)
