@@ -1043,8 +1043,8 @@ def feedback_form():
     
     try:
         with open('Database/feedbacks.txt', 'a') as fdb_file:
-            fdb_id = create_id(include_puntuations=True)
-            fdb_file.write(f'Feedback ID: {fdb_id}\nFeedback: {fdb}\n\n\n')
+            fdb_id = create_id(id_len=5)
+            fdb_file.write(f'~Feedback ID: {fdb_id}\n-Feedback: {fdb}\n\n')
     
     except Exception as E:
         website_error = ['Feedback system', E]
