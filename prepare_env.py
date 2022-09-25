@@ -4,7 +4,8 @@ from os import system as cle
 
 def files():
     files_and_dir = ['static/auth',
-                     'Database/logs', 
+                     'Database/logs',
+                     'Database/feedbacks' 
                      'Database/kiit_kp_canteen.db',  
                      'Database/log_file_names.txt', 
                      'Database/website_info.env']

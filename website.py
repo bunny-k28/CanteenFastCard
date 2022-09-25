@@ -1033,11 +1033,28 @@ def server_shutdown_2FA_form():
 # ******************************************************************* #
 @http.route('/CFC/feedback')
 def feedback():
-    return render_template('feedback.html')
+    return render_template('feedback.html',
+                           greet=greeting())
 
 @http.route('/CFC/feedback', methods=['POST'])
 def feedback_form():
-    return render_template('feedback.html')
+    global website_error
+    fdb = request.form['fdb']
+    
+    try:
+        with open('Database/feedbacks.txt', 'a') as fdb_file:
+            fdb_id = create_id(include_puntuations=True)
+            fdb_file.write(f'Feedback ID: {fdb_id}\nFeedback: {fdb}\n\n\n')
+    
+    except Exception as E:
+        website_error = ['Feedback system', E]
+        return render_template('feedback.html',
+                                greet=greeting(), 
+                                page_error='Unable to collect your feedback.')
+
+    return render_template('feedback.html',
+                           greet=greeting(),
+                           fdb_status=" -Collected✅")
 
 
 

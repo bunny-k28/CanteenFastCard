@@ -1,5 +1,6 @@
 static/auth
 Database/logs
+Database/feedbacks.txt
 Database/kiit_kp_canteen.db
 Database/log_file_names.txt
 Database/preparing_errors.txt

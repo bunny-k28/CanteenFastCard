@@ -43,31 +43,45 @@
 	</nav>
 
 
-    <br><br>
+	<br><br>
 
-    <h2 align="center">
-        <pre>{{ greet }}</pre>
-    </h2>
+	<h2 align="center">
+		<font color="4cd0ff">
+			<pre>{{ greet }}</pre>
+		</font>
+	</h2>
 
-    <br><br>
+	<div class="container">
+		{% if page_error.__len__() > 0 %}
+			<div class="alert alert-danger alert-dismissible fade show" role="alert">
+				<strong>
+					<h3>{{ page_error }}</h3>
+				</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		{% endif %}
+	</div>
 
-    <div class="container">
-        <div class="mb-3">
-            <label for="exampleFormControlTextarea1" class="form-label">
-                <h3>
-                    Your Feedback
-                </h3>
-            </label>
-            <form class="form-group" method="post">
-                <textarea style="height: 8cm" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-                <div class="d-grid gap-2 my-3">
-                    <button class="btn btn-primary" type="submit">
-                        SUBMIT FEEDBACK
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
+	<br><br>
+
+	<div class="container">
+		<div class="mb-3">
+			<label for="exampleFormControlTextarea1" class="form-label">
+				<h3>
+					Your Feedback <font color="8dff8d">{{ fdb_status }}</font>
+				</h3>
+			</label>
+			<form class="form-group" method="post">
+				<textarea style="height: 8cm" class="form-control" id="exampleFormControlTextarea1" rows="3"
+					name="fdb"></textarea>
+				<div class="d-grid gap-2 my-3">
+					<button class="btn btn-primary" type="submit">
+						<h4>SUBMIT FEEDBACK</h4>
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
 
 
 	<!-- Bootstrap Bundle with Popper -->
