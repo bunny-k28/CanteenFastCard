@@ -1029,7 +1029,7 @@ def server_shutdown_2FA_form():
 
 
 
-# ****************************CommonLinks**************************** #
+# ****************************FeedbackLink**************************** #
 # ******************************************************************* #
 @http.route('/CFC/feedback')
 def feedback():
@@ -1055,6 +1055,28 @@ def feedback_form():
     return render_template('feedback.html',
                            greet=greeting(),
                            fdb_status=" -Collected✅")
+
+
+# ******************************************************** #
+@http.route('/admin/developer/database/feedback/view')
+def feedback_viewer():
+    global website_error
+
+    try:
+        with open('Database/feedbacks.txt', 'r') as fdb_file:
+            fdbs = fdb_file.read()
+
+    except Exception as E:
+        website_error = ['feedback viewer ~feedback_viewer()', E]
+        return render_template('Admin/feedback_viewer.html', 
+                               admin=session["active_admin_ssid"],
+                               error='Unable to show the feedbacks', 
+                               web_page_msg=greeting())
+
+    return render_template('Admin/feedback_viewer.html', 
+                            admin=session["active_admin_ssid"],
+                            web_page_msg=greeting(), 
+                            feedbacks=fdbs)
 
 
 
