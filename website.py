@@ -1073,10 +1073,17 @@ def feedback_viewer():
                                error='Unable to show the feedbacks', 
                                web_page_msg=greeting())
 
-    return render_template('Admin/feedback_viewer.html', 
+    if fdbs.__len__() <= 0:
+        return render_template('Admin/feedback_viewer.html', 
                             admin=session["active_admin_ssid"],
                             web_page_msg=greeting(), 
-                            feedbacks=fdbs)
+                            feedbacks='No feedback available!')
+
+    else:
+        return render_template('Admin/feedback_viewer.html', 
+                                admin=session["active_admin_ssid"],
+                                web_page_msg=greeting(), 
+                                feedbacks=fdbs)
 
 
 
