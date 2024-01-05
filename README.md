@@ -17,9 +17,9 @@
 
 ### 1. Before you start running the website or [`website.py`](https://github.com/bunny-k28/CanteenFastCard/blob/master/website.py) file, you've to prepare your dir with some files and folders.
 
-### 2. To do so, you'll find a [`prepare_env.py`](https://github.com/bunny-k28/CanteenFastCard/blob/master/prepare_env.py) file in the directory.
+### 2. To do so, you'll find a [`setupEnv.py`](https://github.com/bunny-k28/CanteenFastCard/blob/master/setupEnv.py) file in the directory.
 
-### 3. Open your <b><i>CMD/PowerShell/Terminal</i></b> inside the project directory and type ```py .\prepare_env.py```. After the program is running in your terminal, enter ```dir, libs```
+### 3. Open your <b><i>CMD/PowerShell/Terminal</i></b> inside the project directory and type ```py .\setupEnv.py```. After the program is running in your terminal, enter ```dir, libs```
 
 ### 4. After the program has finished preparing your directory, you have to make some <i><u>modifications</u></i> in the `website_info.env`.
     • Env Vars
