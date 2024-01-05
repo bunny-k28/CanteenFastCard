@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+	<link rel="shortcut icon" href="../../static/images/favicon.ico" type="image/x-icon">
+
+    <title>CFC•Dev Error</title>
+</head>
+
+<body>
+    <nav id="navbar-example2" class="navbar navbar-light bg-light px-3">
+		<a class="navbar-brand" href="/home">
+			<div class="row g-3">
+				<div class="col-auto">
+					<img src="../../static/images/favicon.ico" width="50" height="50"
+						class="d-inline-block align-text-top">
+				</div>
+				<div class="col-auto">
+					<h3>
+						<label>KIIT Canteen</label>
+					</h3>
+				</div>
+			</div>
+		</a>
+
+		<ul class="nav nav-pills">
+			<li class="nav-item">
+				<a class="btn btn-outline-primary" href="/admin/dashboard/{{ admin }}">
+					<h4>Back</h4>
+				</a>
+			</li>
+		</ul>
+	</nav>
+
+    <br><br><br><br><br><br><br><br><br>
+
+    <h1 align="center">
+		<pre>Error in: {{ error_stack[0] }}</pre>
+        <p>
+			Error: {{ error_stack[1] }}
+		</p>
+    </h1>
+
+    <!-- Bootstrap Bundle with Popper -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+    crossorigin="anonymous"></script>
+
+</body>
+
+</html>

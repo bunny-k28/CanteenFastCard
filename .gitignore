@@ -1,9 +1,7 @@
-static/auth
+site/static/auth
 Database/logs
 Database/feedbacks.txt
-Database/kiit_kp_canteen.db
+Database/cfc_userDatabase.db
 Database/log_file_names.txt
-Database/preparing_errors.txt
-Database/website_info.env
+*.env
 Testing
-.gitignore

@@ -1,0 +1,95 @@
+<!-- the home/main web page html code -->
+
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+	<link rel="shortcut icon" href="../../static/images/favicon.ico" type="image/x-icon">
+
+	<title>CFC•Feedback</title>
+</head>
+
+<body>
+
+	<nav id="navbar-example2" class="navbar navbar-light bg-light px-3">
+		<a class="navbar-brand" href="/home">
+			<div class="row g-3">
+				<div class="col-auto">
+					<img src="../../static/images/favicon.ico" width="50" height="50"
+						class="d-inline-block align-text-top">
+				</div>
+				<div class="col-auto">
+					<h3>
+						<label>KIIT Canteen</label>
+					</h3>
+				</div>
+			</div>
+		</a>
+
+		<div class="btn-group">
+			<a type="button" class="btn btn-outline-primary" href="/home">
+				<h4>
+					Home
+				</h4>
+			</a>
+		</div>
+
+	</nav>
+
+
+	<br><br>
+
+	<h2 align="center">
+		<font color="4cd0ff">
+			<pre>{{ greet }}</pre>
+		</font>
+	</h2>
+
+	<div class="container">
+		{% if page_error.__len__() > 0 %}
+			<div class="alert alert-danger alert-dismissible fade show" role="alert">
+				<strong>
+					<h3>{{ page_error }}</h3>
+				</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		{% endif %}
+	</div>
+
+	<br><br>
+
+	<div class="container">
+		<div class="mb-3">
+			<label for="exampleFormControlTextarea1" class="form-label">
+				<h3>
+					Your Feedback <font color="8dff8d">{{ fdb_status }}</font>
+				</h3>
+			</label>
+			<form class="form-group" method="post">
+				<textarea style="height: 8cm" class="form-control" id="exampleFormControlTextarea1" rows="3"
+					name="fdb"></textarea>
+				<div class="d-grid gap-2 my-3">
+					<button class="btn btn-primary" type="submit">
+						<h4>SUBMIT FEEDBACK</h4>
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+
+	<!-- Bootstrap Bundle with Popper -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+		crossorigin="anonymous"></script>
+
+</body>
+
+
+</html>

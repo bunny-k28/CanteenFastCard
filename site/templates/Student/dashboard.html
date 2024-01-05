@@ -1,0 +1,222 @@
+<!-- the home/main web page html code -->
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+    <!-- <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" /> -->
+    <!-- <script defer src="https://pyscript.net/alpha/pyscript.js"></script> -->
+
+    <link rel="shortcut icon" href="../../static/images/favicon.ico" type="image/x-icon">
+
+    <title>CFC•Dashboard</title>
+</head>
+
+<body>
+
+    <nav id="navbar-example2" class="navbar navbar-light bg-light px-3">
+        <a class="navbar-brand" href="#">
+            <div class="row g-3">
+                <div class="col-auto">
+                    <img src="../../static/images/favicon.ico" width="50" height="50"
+                        class="d-inline-block align-text-top">
+                </div>
+                <div class="col-auto">
+                    <h3>
+                        <label>KIIT Canteen</label>
+                    </h3>
+                </div>
+            </div>
+        </a>
+
+        <ul class="nav nav-pills">
+			<li class="nav-item">
+				<a class="btn btn-outline-danger" href="/dashboard/logout">
+					<h5>Logout</h5>
+				</a>
+			</li>
+		</ul>
+
+    </nav>
+
+    <br>
+
+    <h2 align="center">
+        <font color="#3096ee">
+            <pre> {{ web_page_msg }} </pre>
+        </font>
+    </h2>
+
+    <div class="container">
+        {% if error.__len__() > 0 %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>
+                    <h3>{{ error }}</h3>
+                </strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+    </div>
+
+    <br>
+
+    <div class="container">
+
+        <link rel="stylesheet" 
+        href="{{ url_for('static', filename='css/text_coloring.css') }}">
+
+        <div class="card pay">
+            <div class="card-header">
+                <h4>
+                    <pre>For: {{ student_roll_no }}</pre>
+                </h4>
+            </div>
+
+            <div class="card-body">
+
+                <h2 class="card-title pay-title">
+                    Pay for your Items here 💳
+                </h2>
+
+                <p class="card-text">
+                    <h5>
+                        Just Enter the total amount of purchase/item(s) and click 
+                        <b><u>Pay Amount</u></b> button.
+                    </h5>
+                </p>
+
+                <div class="row g-3">
+
+                    <div class="col-auto">
+                        <a href="/account/payment" class="btn btn-success">Pay Amount</a>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <br>
+
+        <div class="card update">
+            <div class="card-header">
+                <h4>
+                    <pre>For: {{ student_roll_no }}</pre>
+                </h4>
+            </div>
+
+            <div class="card-body">
+                <h2 class="card-title update-title">
+                    Update Account Balance Here 💵
+                </h2>
+
+                <p class="card-text">
+                    <h5>
+                        Enter the amount/balance to be updated to your canteen account, 
+                        And click <b><u>Update Balance</u></b> button.
+                    </h5>
+                </p>
+
+                <div class="row g-3">
+
+                    <div class="col-auto">
+                        <a href="/account/balance/update" class="btn btn-warning">Update Balance</a>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <br>
+
+        <div class="card check">
+            <div class="card-header">
+                <h4>
+                    <pre>For: {{ student_roll_no }}</pre>
+                </h4>
+            </div>
+
+            <div class="card-body">
+                <h2 class="card-title check-title">
+                    Check Account Balance Here 🖨️
+                </h2>
+
+                <p class="card-text">
+                    <h5>
+                        If you want to check your account balance, 
+                        click <b><u>Check Balance</u></b> button.
+                    </h5>
+                </p>
+
+                <a href="/account/balance/check" class="btn btn-info">Check Balance</a>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="card log">
+            <div class="card-header">
+                <h4>
+                    <pre>For: {{ student_roll_no }}</pre>
+                </h4>
+            </div>
+
+            <div class="card-body">
+                <h2 class="card-title">
+                    Request Transaction Log File Here 📑
+                </h2>
+
+                <p class="card-text">
+                    <h5>
+                        To receive your transaction log file through E-mail, 
+                        click the <b><u>Request File</u></b> button.
+                        <br>
+                        And to view your transaction here, click the 
+                        <b><u>View Transactions</u></b> button.
+                    </h5>
+                </p>
+
+                <div class="row g-3 mt-2">
+                    
+                    <div class="col-auto">
+                        <a href="/account/transaction/send_log" class="btn btn-secondary">
+                            Request File
+                        </a>
+                    </div>
+
+                    <div class="col-auto">
+                        <h2>
+                            OR
+                        </h2>
+                    </div>
+
+                    <div class="col-auto">
+                        <a href="/account/transaction/view" class="btn btn-outline-primary">
+                            View Transactions
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <br>
+
+    </div>
+
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>

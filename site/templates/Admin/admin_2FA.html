@@ -1,0 +1,62 @@
+<!-- the home/main web page html code -->
+
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+	<link rel="shortcut icon" href="../../static/images/favicon.ico" type="image/x-icon">
+
+	<title>CFC•2FA</title>
+</head>
+
+<body>
+
+    <br><br><br><br><br><br><br><br>
+
+    <div class="container">
+		{% if validity.__len__() > 0 %}
+			<div class="alert alert-danger alert-dismissible fade show" role="alert">
+				<strong>
+					<h3>{{ validity }}</h3>
+				</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		{% endif %}
+	</div>
+
+    <br><br>
+
+    <div id="container">
+
+        <form class="row g-3", method="post">
+
+            <div class="col-5">
+                <label></label>
+            </div>
+        
+            <div class="col-2">
+                <input type="password" class="form-control" 
+                name="admin_2FA_code" placeholder="6-Digit 2FA Code" required>
+            </div>
+        
+            <div class="d-grid gap-2 col-6 mx-auto">
+                <button type="submit" class="btn btn-primary mb-3">Login</button>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+    crossorigin="anonymous"></script>
+
+</body>
+
+</html>

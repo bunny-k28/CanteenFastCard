@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">
+
+    <!-- <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" /> -->
+    <!-- <script defer src="https://pyscript.net/alpha/pyscript.js"></script> -->
+
+    <link rel="shortcut icon" href="../../static/images/favicon.ico" type="image/x-icon">
+
+    <title>CFC•Admin Registration</title>
+</head>
+
+<body>
+    <nav id="navbar-example2" class="navbar navbar-light bg-light px-3">
+		<a class="navbar-brand" href="/home">
+			<div class="row g-3">
+				<div class="col-auto">
+					<img src="../../static/images/favicon.ico" width="50" height="50"
+						class="d-inline-block align-text-top">
+				</div>
+				<div class="col-auto">
+					<h3>
+						<label>KIIT Canteen</label>
+					</h3>
+				</div>
+			</div>
+		</a>
+
+		<ul class="nav nav-pills">
+			<li class="nav-item">
+				<a class="btn btn-outline-primary" href="/admin/login">
+					<h4>Back</h4>
+				</a>
+			</li>
+		</ul>
+	</nav>
+
+    <br><br>
+
+    <h2 align="center">
+        <font color="#3096ee">
+            <pre>{{ web_page_msg }}</pre>
+        </font>
+    </h2>
+
+    <div class="container">
+		{% if web_page_msg2.__len__() > 0 %}
+			<div class="alert alert-info alert-dismissible fade show" role="alert">
+				<strong>
+					<h3>{{ web_page_msg2 }}</h3>
+				</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" disabled></button>
+			</div>
+		{% endif %}
+	</div>
+
+    <div class="container">
+		{% if error.__len__() > 0 %}
+			<div class="alert alert-danger alert-dismissible fade show" role="alert">
+				<strong>
+					<h3>{{ error }}</h3>
+				</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+		{% endif %}
+	</div>
+
+    <br><br>
+
+    <div class="container">
+
+        <link rel="stylesheet" 
+        href="{{ url_for('static', filename='css/text_coloring.css') }}">
+
+        <div class="card pay">
+            <div class="card-header">
+                <h4>
+                    For: Admin Registration
+                </h4>
+            </div>
+
+            <div class="card-body">
+
+                <h2 class="card-title pay-title">
+                    Register yourself here
+                </h2>
+
+                <p class="card-text">
+                    Just enter the a <b>Unique SSID/User Name</b>, <b>Password</b> and your <b>Personal E-Mail ID.</b>.
+                </p>
+
+                <div class="row g-3">
+
+                    <form class="form-group" method="post">
+                        <div class="row g-3">
+                    
+                            <div class="col-2">
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" name="ussid"
+                                        placeholder="Custom SSID" required>
+                                </div>
+                            </div>
+
+                            <div class="col-3">
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" name="email"
+                                        placeholder="Personal E-Mail ID" required>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row g-3">
+
+                            <div class="col-2">
+                                <input  type="password" class="form-control" 
+                                name="new_password" placeholder="Unique Password" required>
+                            </div>
+                            
+                            <div class="col-2">
+                                <input  type="password" class="form-control" 
+                                name="confirm_password" placeholder="Confirm Password" required>
+                            </div>
+
+                        </div>
+
+                        <br>
+
+                        <div class="row g-3">
+
+                            <div class="col-3">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">🔑</span>
+                                    <input type="password" class="form-control" name="master_key"
+                                        placeholder="Master Process Key" required>
+                                </div>
+                            </div>
+
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-success">Register</button>
+                            </div>
+                    
+                            <div class="col-auto">
+                                <h1>
+                                    <pre>{{ status }}</pre>
+                                </h1>
+                            </div>
+
+                        </div>
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <br><br>
+
+    <div class="container">
+        {% if next_bool %}
+            <h1 align="center">
+                <a class="btn btn-primary" href="/admin/login/authentication">
+                    NEXT ➡️
+                </a>
+            </h1>
+        {% endif %}
+    </div>
+
+</body>
+
+</html>
