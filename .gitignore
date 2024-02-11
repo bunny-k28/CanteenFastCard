@@ -162,4 +162,5 @@ cython_debug/
 # Locals
 Docs/
 Testing/
-*.DS_Store
+Database/
+site_settings.env

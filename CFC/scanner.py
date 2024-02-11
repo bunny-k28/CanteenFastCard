@@ -1,46 +1,36 @@
-'''
-Program to scan the BAR code
-'''
-
+import os
 import cv2
 import numpy as np
 
 from pyzbar.pyzbar import decode
 
 
-cam_window = cv2.VideoCapture(0)
-cam_window.set(3, 640)
-cam_window.set(4, 480)
+# Specify the zbar library path
+os.environ['DYLD_LIBRARY_PATH'] = '/opt/homebrew/Cellar/zbar/0.23.93/lib/libzbar.dylib'
 
-data = str()
-
-
-def scan():
-    global data
+def scan_barcode():
+    cap = cv2.VideoCapture(0)
+    data = ''
 
     while True:
-        _, img = cam_window.read()
+        frame = cap.read()[-1]
+        barcodes = decode(frame)
 
-        for qr in decode(img):
-            data = qr.data.decode('utf-8')
-            # print(data)
+        for barcode in barcodes:
+            data = barcode.data.decode('utf-8')
+            print("Barcode data:", data)
 
-            pts = np.array([qr.polygon], np.int32)
+            pts = np.array([barcode.polygon], np.int32)
             pts = pts.reshape((-1, 1, 2))
 
-            cv2.polylines(img, [pts], True, (0, 0, 255), 5)
+            cv2.polylines(frame, [pts], True, (0, 0, 255), 5)
 
-            pts2 = qr.rect
-
-            cv2.putText(img, data, (pts2[0], pts2[1]), 
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
-        
             return int(data)
+        
+        # Display the frame (flipped)
+        cv2.flip(frame, 1, frame)
+        cv2.imshow('Barcode Scanner', frame)
 
-        cv2.flip(img, 1, img)
-
-        cv2.imshow('QR Scanner', img)
-        if cv2.waitKey(1) == (data.__len__() == 7):
+        # Exit if data is digit and length is 7
+        if cv2.waitKey(1) == ord('q'):
             break
-
-

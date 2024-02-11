@@ -30,7 +30,7 @@
         5. MASTER_PROCESS_KEY -> for transaction verification process
 
 ### 5. After all these operations, your program is ready to run. Just open your <b><i>CMD/PowerShell/Terminal</i></b> inside the project directory and type ```py .\website.py```.
-![](static/images/terminal.jpg)
+![](CFC/site/static/images/terminal.jpg)
 <br>
 
 ## <li>Getting Started</li>
@@ -40,15 +40,15 @@
 #### [ There are 2 ways to register your ID card. One <u>automatic</u>, one <u>manual</u>. ]
 
 #### 1.1. In auto mode, when you'll scan your <b><i>ID card</i></b> or put your credentials manually. The website will automatically open the  <b><i>registration</i></b> form if the ID is <u><b>not registared</b></u>. After you'll fill up your details in the registration form, the canteen employee will enter the <b><i>Master Key</i></b> as per the verification process. Then you can click the `Register` button to register.
-![](static/images/auto_register.jpg)
+![](CFC/site/static/images/auto_register.jpg)
 <br>
 
 #### 1.3. In the manual mode, you have to manually register yourself by clicking on the `Register` button present in <u><b>the top right corner</b></u>. After you'll fill up your details in the registration form, the canteen employee will enter the <b><i>Master Key</i></b> as per the verification process. Then you can click the `Register` button to register.
-![](static/images/manual_register.jpg)
+![](CFC/site/static/images/manual_register.jpg)
 <br>
 
 ### 2. Login
-![](static/images/login.jpg)
+![](CFC/site/static/images/login.jpg)
 
 #### [ There are two ways to login to your account. One by <b>scanning ID-card</b>, one by entering <b>roll no.</b> and <b>password/pin-code</b>. ]
 
@@ -58,7 +58,7 @@
 
 
 ### 3. Password/Pin-Code Reset
-![](static/images/pin-reset.jpg)
+![](CFC/site/static/images/pin-reset.jpg)
 
 #### [ There are 2 ways to <b>reset</b> your <b><i>account password/pin-code</i></b>. One by <b><i>reset link</i></b>, one by <i><b>posting request</i></b>. ]
 
@@ -75,21 +75,21 @@
 #### [ Once you've logged-in, you'll be in your CanteenFastCard dashboard from where you can pay for your items, check your account balance, put more amount into your account and you can also view/request your transaction(s) log file (or receipt). ]
 
 ### 1. Payment
-![](static/images/pay.jpg)
+![](CFC/site/static/images/pay.jpg)
 #### As you can see in the above image, you just have to enter the <b>total amount</b> of the bought item(S) and then the canteen employee will enter the master key as per the verification process. Then click the `Pay Amount` button.
 <br>
 
 ### 2. Update
-![](static/images/update.jpg)
+![](CFC/site/static/images/update.jpg)
 #### As you can see in the above image, you just have to enter the amount you want to update/deposite into your account and then the canteen employee will enter the master key as per the verification process. Then click the `Update Balance` button.
 <br>
 
 ### 3. Check
-![](static/images/check.jpg)
+![](CFC/site/static/images/check.jpg)
 #### As you can see in the above image, you just have to click the `Check Balance` button and you'll be able to check your <i><u>current account balance</u></i>.
 <br>
 
 ### 4. Log
-![](static/images/log.jpg)
+![](CFC/site/static/images/log.jpg)
 #### As you can see in the above image, there are 2 buttons. One, the `View Transition` button to view the <i><u>transaction history/log</u></i> in the browser. Second, the `Request File` button, this request button will <i><u>mail you a softcopy</u></i>  of your transaction history/log.
 <br>
