@@ -13,9 +13,9 @@ from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 
 from ..models import db
-from ..models.admin import Admin
-from ..models.errors import Error
-from ..models.students import Student
+from ..models.admin import AdminModel
+from ..models.errors import ErrorModel
+from ..models.students import StudentModel
 
 
 load_dotenv(
@@ -75,7 +75,7 @@ def create_id(id_len: int=16, only_int: bool=False):
 
 
 def create_error_id(id_len: int=7, reflect: bool=False):
-    eids = [int(eid[0]) for eid in db.query(Error.eid).all()]
+    eids = [int(eid[0]) for eid in db.query(ErrorModel.eid).all()]
 
     while True:
         eid = ''.join(
@@ -108,13 +108,13 @@ def create_2FA_code(code_len: int=6, code_type: str='numeric'):
 
 
 def scan_ids(user_sid: int):
-    user_ids = db.query(Student.usid).all()
+    user_ids = db.query(StudentModel.usid).all()
     if user_sid in [user_id for (user_id,) in user_ids]: return True
     else: False
 
 
 def get_student_details(user_sid: int, give: str):
-    user_data = db.query(Student).filter_by(usid=user_sid).first()
+    user_data = db.query(StudentModel).filter_by(usid=user_sid).first()
     data_map = {
         'usid': int(user_data.usid),
         'pin': int(user_data.pin),
@@ -130,15 +130,16 @@ def register_student(new_usid: int, pin: int, init_amount: int, **kwargs):
     date = datetime.datetime.now().strftime('%d-%m-%Y')
 
     try:
-        existing_user = db.query(Student).filter_by(usid=new_usid).first()
+        existing_user = db.query(StudentModel).filter_by(usid=new_usid).first()
         if existing_user: return 'existing_user'
         else:
-            new_user = Student(usid=new_usid, pin=pin, amount=init_amount, 
+            new_user = StudentModel(usid=new_usid, pin=pin, amount=init_amount, 
                             name=kwargs['name'], email=kwargs['email'])
             db.add(new_user)
             db.commit()
 
-            log_file = f'../../Database/logs/{new_usid}.txt'
+            log_file = os.path.join(os.path.abspath(os.path.dirname('.')), 
+                                    'Database/logs', f'{new_usid}.txt')
             try:
                 open(log_file, 'x').close()
                 with open(log_file, 'a') as file:
@@ -157,10 +158,10 @@ def register_student(new_usid: int, pin: int, init_amount: int, **kwargs):
 
 def register_admin(uid: int, ssid: str, password: str, email: str):
     try:
-        existing_user = db.query(Admin).filter_by(uid=uid).first()
+        existing_user = db.query(AdminModel).filter_by(uid=uid).first()
         if existing_user: return 'existing_user'
         else:
-            new_user = Admin(uid=uid, ssid=ssid, pswd=password, email=email)
+            new_user = AdminModel(uid=uid, ssid=ssid, pswd=password, email=email)
             db.add(new_user)
             db.commit()
 
@@ -199,12 +200,14 @@ def debit_balance(debit_amount: int, _id: int):
             if final_amount <= 10:
                 send_mail(_id, get_student_details(_id, 'email'), 'low-balance', balance=final_amount)
 
-            student = db.query(Student).filter_by(usid=_id).first()
+            student = db.query(StudentModel).filter_by(usid=_id).first()
             if student:
                 student.amount = final_amount
                 db.commit()
 
-            w_file = os.path.join('../../Database/logs', str(get_student_details(_id, 'usid')) + '.txt')
+            w_file = os.path.join(
+                os.path.abspath(os.path.dirname('.')), 
+                'Database/logs', str(get_student_details(_id, 'usid')) + '.txt')
 
             with open(w_file, 'a') as file:
                 file.write(f'Date: {date}\n')
@@ -223,12 +226,14 @@ def credit_balance(update_amount: int, _id: int):
 
     final_amount = std_amount + update_amount
 
-    student = db.query(Student).filter_by(usid=_id).first()
+    student = db.query(StudentModel).filter_by(usid=_id).first()
     if student:
         student.amount = final_amount
         db.commit()
 
-    w_file = '../../Database/logs/' + str(get_student_details(_id, 'usid')) + '.txt'
+    w_file = os.path.join(
+            os.path.abspath(os.path.dirname('.')), 
+            'Database/logs', str(get_student_details(_id, 'usid')) + '.txt')
 
     with open(w_file, 'a') as file:
         file.write(f'Date: {date}\n')
@@ -267,7 +272,9 @@ You can reply to this mail with your Log file request. You'll receive a mail wit
 Thank You
 KIIT Polytechnic Canteen
 """
-        std_log_file = f'../../Database/logs/{usid}.txt'
+        std_log_file = os.path.join(
+            os.path.abspath(os.path.dirname('.')), 
+            'Database/logs', f'{usid}.txt')
 
         try:
             with open(std_log_file, "rb") as attachment:
@@ -313,7 +320,9 @@ KIIT KP Canteen
 """
 
         try:
-            with open("../../README.md", "rb") as attachment:
+            readME_file = os.path.join(os.path.abspath(os.path.dirname('.')), 'README.md')
+
+            with open(readME_file, "rb") as attachment:
                 part = MIMEBase("application", "octet-stream")
                 part.set_payload(attachment.read())
             
@@ -440,6 +449,6 @@ Your new PIN-CODE is: {kwargs['new_pin']}.
         return True
 
     except Exception as E:
-        cprint(f'Failed!\nDue: {E}', 'red', attrs=['bold'])
+        cprint(f'Failed sending mail!\nDue: {E}', 'red', attrs=['bold'])
         return False
 

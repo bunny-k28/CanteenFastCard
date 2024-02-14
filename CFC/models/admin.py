@@ -6,8 +6,9 @@ from . import Base
 
 
 # Admin model
-class Admin(UserMixin, Base):
+class AdminModel(UserMixin, Base):
     __tablename__ = 'admins'
+
     uid = Column(Integer, primary_key=True, unique=True)
     ssid = Column(String(100), unique=True, nullable=True)
     pswd = Column(String(100), nullable=False)

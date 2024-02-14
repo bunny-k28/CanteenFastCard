@@ -6,8 +6,9 @@ from . import Base
 
 
 # Student model
-class Student(UserMixin, Base):
+class StudentModel(UserMixin, Base):
     __tablename__ = 'students'
+
     usid = Column(Integer, primary_key=True, unique=True)
     name = Column(String(50), unique=True, nullable=False)
     pin = Column(Integer, nullable=False)

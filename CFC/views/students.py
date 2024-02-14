@@ -2,14 +2,13 @@ import os
 
 from flask import Blueprint
 from flask import request, session
-from flask_login import LoginManager
-from flask_login import login_user, logout_user, login_required
 from flask import render_template as render, url_for as to, redirect
+from flask_login import LoginManager, login_user, logout_user, login_required
 
 from ..models import db
-from ..models.errors import Error
-from ..models.students import Student
-from ..models.feedbacks import Feedback
+from ..models.errors import ErrorModel
+from ..models.students import StudentModel
+from ..models.feedbacks import FeedbackModel
 
 from . import *
 from ..scanner import scan_barcode
@@ -24,12 +23,18 @@ load_dotenv(
 MASTER_PRODUCT_KEY = os.environ.get('MASTER_PRODUCT_KEY')
 
 
+login_manager = LoginManager()
 student = Blueprint('student', __name__, 
                     url_prefix='/student', 
                     template_folder='../site/templates/Student')
 
 
 # **********************Student Routes********************** #
+@login_manager.user_loader
+def load_user(usid):
+    return db.query(StudentModel).get(int(usid))
+
+
 @student.route('/home', methods=['GET', 'POST'])
 @student.route('/', methods=['GET', 'POST'])
 def index():
@@ -42,17 +47,17 @@ def index():
         try:
             if scan_ids(int(session["active_student_id"])):
                 if get_student_details(int(session["active_student_id"]), 'pin') == int(request.form['std_id_pin']):
-                    user = db.query(Student).filter_by(usid=session["active_student_id"]).first()
+                    user = db.query(StudentModel).filter_by(usid=session["active_student_id"]).first()
                     login_user(user)
 
-                    return redirect(to('dashboard', user=str(session["active_student_id"])))
+                    return redirect(to('student.dashboard', user=str(session["active_student_id"])))
 
                 else: return render('index.html', alert_message='[ Invalid Pin Code ]')
-            else: return redirect(to('autoIdRegistration'))
+            else: return redirect(to('student.autoIdRegistration'))
 
         except Exception as E:
             try:
-                new_error = Error(
+                new_error = ErrorModel(
                     eid=create_error_id(), 
                     emsg=str(E), 
                     etime=datetime.datetime.now(), 
@@ -70,16 +75,16 @@ def login_by_scan():
     try: 
         session["active_student_id"] = int(scan_barcode())
         if scan_ids(int(session["active_student_id"])):
-            user = db.query(Student).filter_by(usid=session["active_student_id"]).first()
+            user = db.query(StudentModel).filter_by(usid=session["active_student_id"]).first()
             login_user(user)
 
-            return redirect(to('dashboard', user=str(session["active_student_id"])))
+            return redirect(to('student.dashboard', user=str(session["active_student_id"])))
 
-        else: return redirect(to('autoIdRegistration'))
+        else: return redirect(to('student.autoIdRegistration'))
 
     except Exception as E:
         try:
-            new_error = Error(
+            new_error = ErrorModel(
                 eid=create_error_id(), 
                 emsg=str(E), 
                 etime=datetime.datetime.now(), 
@@ -99,7 +104,7 @@ def logout():
     try: logout_user()
     except Exception: pass
 
-    return redirect(to('index', status='logged-out'))
+    return redirect(to('student.index', status='logged-out'))
 
 
 @student.route('/id/auto_registration', methods=['GET', 'POST'])
@@ -133,14 +138,14 @@ def autoIdRegistration():
                     register_student(int(session["active_student_id"]), pin,
                                     int(init_amount), name=name, email=email)
 
-                    user = db.query(Student).filter_by(usid=session["active_student_id"]).first()
+                    user = db.query(StudentModel).filter_by(usid=session["active_student_id"]).first()
                     login_user(user)
 
-                    return redirect(to('dashboard', user=str(session["active_student_id"])))
+                    return redirect(to('student.dashboard', user=str(session["active_student_id"])))
 
                 except Exception as E:
                     try:
-                        new_error = Error(
+                        new_error = ErrorModel(
                             eid=create_error_id(), 
                             emsg=str(E), 
                             etime=datetime.datetime.now(), 
@@ -185,14 +190,14 @@ def manualIdRegistration():
                     register_student(int(session["active_student_id"]), int(pin),
                                     int(init_amount), name=name, email=email)
 
-                    user = db.query(Student).filter_by(usid=session["active_student_id"]).first()
+                    user = db.query(StudentModel).filter_by(usid=session["active_student_id"]).first()
                     login_user(user)
                     
-                    return redirect(to('dashboard', user=str(session["active_student_id"])))
+                    return redirect(to('student.dashboard', user=str(session["active_student_id"])))
 
                 except Exception as E:
                     try:
-                        new_error = Error(
+                        new_error = ErrorModel(
                             eid=create_error_id(), 
                             emsg=str(E), 
                             etime=datetime.datetime.now(), 
@@ -248,7 +253,7 @@ def payment():
 
                 except Exception as E:
                     try:
-                        new_error = Error(
+                        new_error = ErrorModel(
                             eid=create_error_id(), 
                             emsg=str(E), 
                             etime=datetime.datetime.now(), 
@@ -302,7 +307,7 @@ def updateAmount():
 
                 except Exception as E:
                     try:
-                        new_error = Error(
+                        new_error = ErrorModel(
                             eid=create_error_id(), 
                             emsg=str(E), 
                             etime=datetime.datetime.now(), 
@@ -345,7 +350,7 @@ def viewLog():
 
     except Exception as E:
         try:
-            new_error = Error(
+            new_error = ErrorModel(
                 eid=create_error_id(), 
                 emsg=str(E), 
                 etime=datetime.datetime.now(), 
@@ -374,7 +379,7 @@ def sendTransactionLog():
     
     except Exception as E:
         try:
-            new_error = Error(
+            new_error = ErrorModel(
                 eid=create_error_id(), 
                 emsg=str(E), 
                 etime=datetime.datetime.now(), 
@@ -402,11 +407,11 @@ def twoFA():
             
             try:
                 send_mail(int(session["active_student_id"]), '2FA', twoFA=session["2FA-code"])
-                return redirect(to('pinCodeReset'))
+                return redirect(to('student.pinCodeReset'))
             
             except Exception as E:
                 try:
-                    new_error = Error(
+                    new_error = ErrorModel(
                         eid=create_error_id(), 
                         emsg=str(E), 
                         etime=datetime.datetime.now(), 
@@ -455,7 +460,7 @@ def pinCodeReset():
 
             else:
                 try:
-                    student = db.query(Student).filter_by(usid=str(session["active_student_id"])).first()
+                    student = db.query(StudentModel).filter_by(usid=str(session["active_student_id"])).first()
                     if student:
                         student.pin = confirm_pin_code
                         db.commit()
@@ -471,7 +476,7 @@ def pinCodeReset():
                     msg = f'The 2FA code has been sent to {std_email}'
 
                     try:
-                        new_error = Error(
+                        new_error = ErrorModel(
                             eid=create_error_id(), 
                             emsg=str(E), 
                             etime=datetime.datetime.now(), 
@@ -486,20 +491,20 @@ def pinCodeReset():
                             student_roll_no=str(session["active_student_id"]),
                             status='❌')
 
-    else: return redirect(to('twoFA'))
+    else: return redirect(to('student.twoFA'))
 
 
 @student.route('/CFC/feedback', methods=['GET', 'POST'])
 def feedback():
     if request.method == 'GET':
-        return render('../feedback.html',
+        return render('feedback.html',
                     greet=greeting())
 
     if request.method == 'POST':
         fdb = request.form['fdb']
 
         try:
-            new_feedback = Feedback(
+            new_feedback = FeedbackModel(
                 fid=create_id(id_len=5),
                 feedback=fdb)
 
@@ -508,7 +513,7 @@ def feedback():
         
         except Exception as E:
             try:
-                new_error = Error(
+                new_error = ErrorModel(
                     eid=create_error_id(), 
                     emsg=str(E), 
                     etime=datetime.datetime.now(), 
@@ -518,10 +523,10 @@ def feedback():
                 db.commit()
             except Exception as E: cprint(f'\nError filing the route error\nError: {E}', 'red')
 
-            return render('../feedback.html',
+            return render('feedback.html',
                             greet=greeting(), 
                             page_error='Unable to collect your feedback.')
 
-        return render('../feedback.html',
+        return render('feedback.html',
                         greet=greeting(),
                         fdb_status=" -Collected✅")

@@ -6,8 +6,9 @@ from . import Base
 
 
 # Error Message model
-class Feedback(UserMixin, Base):
+class FeedbackModel(UserMixin, Base):
     __tablename__ = 'feedbacks'
+
     fid = Column(String(10), primary_key=True, unique=True)
     feedback = Column(String(250), nullable=False)
 

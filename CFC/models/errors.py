@@ -7,8 +7,9 @@ from . import Base
 
 
 # Error Message model
-class Error(UserMixin, Base):
+class ErrorModel(UserMixin, Base):
     __tablename__ = 'errors'
+
     eid = Column(Integer, primary_key=True, unique=True)
     emsg = Column(String(200), nullable=False)
     etime = Column(DateTime, nullable=False, default=datetime.utcnow())
