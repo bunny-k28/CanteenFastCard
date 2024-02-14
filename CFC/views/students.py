@@ -406,7 +406,7 @@ def twoFA():
             session["2FA-code"] = create_2FA_code()
             
             try:
-                send_mail(int(session["active_student_id"]), '2FA', twoFA=session["2FA-code"])
+                send_mail(int(session["active_student_id"]), mail_type='2FA', twoFA=session["2FA-code"])
                 return redirect(to('student.pinCodeReset'))
             
             except Exception as E:

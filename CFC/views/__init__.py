@@ -245,11 +245,12 @@ def credit_balance(update_amount: int, _id: int):
     return final_amount
 
 
-def send_mail(_id=int , to: str=None, mail_type: str=None, **kwargs):
+def send_mail(_id=int, mail_type: str=None, **kwargs):
     try:
         usid = get_student_details(_id, 'usid')
         name = get_student_details(_id, 'name')
         pin_code = get_student_details(_id, 'pin')
+        to = get_student_details(_id, 'email')
     except: pass
 
     date = datetime.datetime.now().strftime('%d-%m-%Y')
