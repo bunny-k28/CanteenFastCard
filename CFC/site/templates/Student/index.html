@@ -18,7 +18,7 @@
 <body>
 
 	<nav id="navbar-example2" class="navbar navbar-light bg-light px-3">
-		<a class="navbar-brand" href="#">
+		<a class="navbar-brand" href="{{ url_for('student.index' ) }}">
 			<div class="row g-3">
 				<div class="col-auto">
 					<img src="../../static/images/favicon.ico" width="50" height="50"
@@ -33,7 +33,7 @@
 		</a>
 
 		<div class="btn-group">
-			<a type="button" class="btn btn-outline-primary" href="/id/manual_registration">
+			<a type="button" class="btn btn-outline-primary" href="{{ url_for('student.manualIdRegistration' ) }}">
 				<h4>
 					Register
 				</h4>
@@ -46,7 +46,7 @@
 
 			<ul class="dropdown-menu">
 				<li>
-					<a class="dropdown-item" href="/admin/login">Admin</a>
+					<a class="dropdown-item" href="/admin">Admin</a>
 				</li>
 			</ul>
 		</div>
@@ -104,7 +104,7 @@
 			</div>
 
 			<h5 align="center">
-				<a class="link-danger" href="/account/update/pin_code/2FA">
+				<a class="link-danger" href="{{ url_for('student.twoFA' ) }}">
 					Reset PIN-CODE
 				</a>
 			</h5>
@@ -132,7 +132,7 @@
 	</div>
 
 	<link rel="stylesheet" href="../../static/css/padding.css">
-	<a class="btn btn-link sfdb" href="/CFC/feedback">
+	<a class="btn btn-link sfdb" href="{{ url_for('student.feedback' ) }}">
 		<div class="row g-3">
 
 			<div class="col-auto">

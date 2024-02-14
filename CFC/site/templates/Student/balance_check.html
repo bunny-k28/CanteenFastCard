@@ -21,7 +21,7 @@
 <body>
 
     <nav id="navbar-example2" class="navbar navbar-light bg-light px-3">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="{{ url_for('student.index' ) }}">
             <div class="row g-3">
                 <div class="col-auto">
                     <img src="../../static/images/favicon.ico" width="50" height="50"
@@ -37,7 +37,7 @@
 
         <ul class="nav nav-pills">
 			<li class="nav-item">
-				<a class="btn btn-outline-danger" href="/dashboard/logout">
+				<a class="btn btn-outline-danger" href="{{ url_for('student.logout' ) }}">
 					<h4>Logout</h4>
 				</a>
 			</li>
@@ -79,7 +79,7 @@
                 <div class="row g-3">
 
                     <div class="col-auto">
-                        <a href="/account/payment" class="btn btn-success">Pay Amount</a>
+                        <a href="{{ url_for('student.payment' ) }}" class="btn btn-success">Pay Amount</a>
                     </div>
 
                 </div>
@@ -111,7 +111,7 @@
                 <div class="row g-3">
 
                     <div class="col-auto">
-                        <a href="/account/balance/update" class="btn btn-warning">Update Balance</a>
+                        <a href="{{ url_for('student.updateAmount' ) }}" class="btn btn-warning">Update Balance</a>
                     </div>
 
                 </div>
@@ -143,7 +143,7 @@
                 <div class="row g-3">
                     
                     <div class="col-auto">
-                        <a href="/account/balance/check" class="btn btn-info">Check Balance</a>
+                        <a href="{{ url_for('student.checkBalance' ) }}" class="btn btn-info">Check Balance</a>
                     </div>
 
                     <div class="col-auto">
@@ -184,7 +184,7 @@
                 <div class="row g-3 mt-2">
 
                     <div class="col-auto">
-                        <a href="/account/transaction/send_log" class="btn btn-secondary">
+                        <a href="{{ url_for('student.sendTransactionLog' ) }}" class="btn btn-secondary">
                             Request FIle
                         </a>
                     </div>
@@ -196,7 +196,7 @@
                     </div>
 
                     <div class="col-auto">
-                        <a href="/account/transaction/view" class="btn btn-outline-primary">
+                        <a href="{{ url_for('student.viewLog' ) }}" class="btn btn-outline-primary">
                             View Transactions
                         </a>
                     </div>

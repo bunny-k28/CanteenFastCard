@@ -18,7 +18,7 @@
 <body>
 
     <nav id="navbar-example2" class="navbar navbar-dark bg-light px-3">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="{{ url_for('student.index' ) }}">
             <div class="row g-3">
                 <div class="col-auto">
                     <img src="../../static/images/favicon.ico" width="50" height="50"
@@ -34,7 +34,7 @@
 
         <ul class="nav nav-pills">
             <li class="nav-item">
-                <a class="btn btn-outline-primary" href="/home">
+                <a class="btn btn-outline-primary" href="{{ url_for('student.index' ) }}">
                     <h4>Home</h4>
                 </a>
             </li>
