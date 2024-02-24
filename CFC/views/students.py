@@ -1,4 +1,6 @@
 import os
+import sys
+import traceback
 
 from flask import Blueprint
 from flask import request, session
@@ -11,7 +13,7 @@ from ..models.students import StudentModel
 from ..models.feedbacks import FeedbackModel
 
 from . import *
-from ..scanner import scan_barcode
+from ..scanner import ScannerForWin32
 
 
 load_dotenv(
@@ -21,7 +23,7 @@ load_dotenv(
             'site_settings.env')
 )
 MASTER_PRODUCT_KEY = os.environ.get('MASTER_PRODUCT_KEY')
-
+PLATFORM = sys.platform
 
 login_manager = LoginManager()
 student = Blueprint('student', __name__, 
@@ -70,17 +72,29 @@ def index():
             return render('index.html', alert_message='[ Unable to verify ]')
 
 
+# def gen_scanner_view(camera: ScannerForDarwin):
+#     while True:
+#         frame = camera.get_frame()
+#         yield (b'--frame\r\n'
+#                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+
 @student.route('/id/scan')
 def login_by_scan():
-    try: 
-        session["active_student_id"] = int(scan_barcode())
+    try:
+        # if PLATFORM == 'win32' or 'win64':
+        scanner = ScannerForWin32()
+        session["active_student_id"] = int(scanner.scan())
         if scan_ids(int(session["active_student_id"])):
             user = db.query(StudentModel).filter_by(usid=session["active_student_id"]).first()
             login_user(user)
 
             return redirect(to('student.dashboard', user=str(session["active_student_id"])))
-
         else: return redirect(to('student.autoIdRegistration'))
+
+        # elif PLATFORM == 'darwin':
+        #     scanner = ScannerForDarwin()
+        #     return Response(gen_scanner_view(scanner),
+        #                 mimetype='multipart/x-mixed-replace; boundary=frame')
 
     except Exception as E:
         try:
@@ -118,9 +132,9 @@ def autoIdRegistration():
         email = request.form['email']
         pin = request.form['pin_code']
         init_amount = request.form['initial_amount']
-        master_key = int(request.form['master_product_key'])
+        master_key = request.form['master_product_key']
         
-        if master_key != int(MASTER_PRODUCT_KEY):
+        if master_key != MASTER_PRODUCT_KEY:
             return render('auto_id_registration.html', 
                           alert_message='Invalid Master Product Key.')
 
@@ -170,9 +184,9 @@ def manualIdRegistration():
         email = request.form['email']
         pin = request.form['pin_code']
         init_amount = request.form['initial_amount']
-        master_key = int(request.form['master_product_key'])
+        master_key = request.form['master_product_key']
         
-        if master_key != int(MASTER_PRODUCT_KEY):
+        if master_key != MASTER_PRODUCT_KEY:
             return render('manual_id_registration.html', 
                                 alert_message='Invalid Master Product Key.')
 
@@ -338,9 +352,10 @@ def checkBalance():
 @login_required
 def viewLog():
     try:
-        std_log_name = get_student_details(int(session["active_student_id"]), 'usid')
+        std_log_name = int(session["active_student_id"])
+        std_log_path = os.path.join(os.path.abspath(os.path.dirname('.')), 'Database/logs', f'{std_log_name}.txt')
 
-        with open(f'Database/logs/{std_log_name}.txt', 'r') as log_file:
+        with open(std_log_path, 'r') as log_file:
             std_transaction_details = log_file.read()
 
         return render('log_viewer.html', 
@@ -349,6 +364,7 @@ def viewLog():
                     content=str(std_transaction_details))
 
     except Exception as E:
+        traceback.print_exc()
         try:
             new_error = ErrorModel(
                 eid=create_error_id(), 
@@ -371,7 +387,7 @@ def sendTransactionLog():
     try:
         std_email = get_student_details(int(session["active_student_id"]), 'email')
 
-        send_mail(to=std_email, mail_type='log')
+        send_mail(int(session["active_student_id"]), 'log')
         return render('transaction_log_sender.html', 
                         web_page_msg=f'Hey there: {str(session["active_student_id"])}. Welcome!', 
                         student_roll_no=str(session["active_student_id"]),
@@ -390,8 +406,8 @@ def sendTransactionLog():
         except Exception as E: cprint(f'\nError filing the route error\nError: {E}', 'red')
 
         return render('dashboard.html', 
-                                student_roll_no=str(session["active_student_id"]),
-                                alert_message="Oops... Something went wrong 🤷🏼‍♂️")
+                    student_roll_no=str(session["active_student_id"]),
+                    alert_message="Oops... Something went wrong 🤷🏼‍♂️")
 
 
 @student.route('/account/update/pin_code/2FA', methods=['GET', 'POST'])

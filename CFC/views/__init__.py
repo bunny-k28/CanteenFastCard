@@ -149,7 +149,7 @@ def register_student(new_usid: int, pin: int, init_amount: int, **kwargs):
                     file.write(f'Initial/Opening Balance: Rs.{str(init_amount)}\n\n')
                     file.write('*'*26 + '\n\n')
 
-                    send_mail(new_usid, get_student_details(new_usid, 'email'), 'register')
+                    send_mail(new_usid, 'register')
 
             except FileNotFoundError as FNE: cprint(f'Failed to register student: {FNE}', 'red', attrs=['bold'])
 
@@ -198,7 +198,7 @@ def debit_balance(debit_amount: int, _id: int):
             final_amount = std_amount - debit_amount
             
             if final_amount <= 10:
-                send_mail(_id, get_student_details(_id, 'email'), 'low-balance', balance=final_amount)
+                send_mail(_id, 'low-balance', balance=final_amount)
 
             student = db.query(StudentModel).filter_by(usid=_id).first()
             if student:
@@ -240,7 +240,7 @@ def credit_balance(update_amount: int, _id: int):
         file.write(f'Amount credited: Rs.{update_amount}\n')
         file.write(f'Total amount in account: Rs.{final_amount}\n\n')
 
-    send_mail(_id, get_student_details(_id, 'email'), 'credit', credit_amnt=update_amount, balance=final_amount)
+    send_mail(_id, 'credit', credit_amnt=update_amount, balance=final_amount)
 
     return final_amount
 
