@@ -17,7 +17,7 @@
 
 <body>
 
-	<nav id="navbar-example2" class="navbar navbar-light bg-light px-3">
+	<nav id="navbar-example2" class="navbar navbar-dark bg-dark px-3">
 		<a class="navbar-brand" href="{{ url_for('student.index' ) }}">
 			<div class="row g-3">
 				<div class="col-auto">
@@ -120,11 +120,9 @@
 			<br>
 
 			<div class="d-grid gap-2 col-6 mx-auto">
-				<!-- <form class="row g-3"> -->
 				<a type="submit" class="btn btn-primary mb-3" href="{{ url_for('student.login_by_scan' ) }}">
 					Scan your ID-Card
 				</a>
-				<!-- </form> -->
 			</div>
 
 		</div>
