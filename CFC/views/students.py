@@ -22,7 +22,7 @@ load_dotenv(
             os.path.dirname('.')), 
             'site_settings.env')
 )
-MASTER_PRODUCT_KEY = os.environ.get('MASTER_PRODUCT_KEY')
+MASTER_PRODUCT_KEY = int(os.environ.get('MASTER_PRODUCT_KEY'))
 PLATFORM = sys.platform
 
 login_manager = LoginManager()
