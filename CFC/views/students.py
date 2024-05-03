@@ -13,7 +13,7 @@ from ..models.students import StudentModel
 from ..models.feedbacks import FeedbackModel
 
 from . import *
-from ..scanner import ScannerForWin32
+from ..scanner import scan
 
 
 load_dotenv(
@@ -82,8 +82,7 @@ def index():
 def login_by_scan():
     try:
         # if PLATFORM == 'win32' or 'win64':
-        scanner = ScannerForWin32()
-        session["active_student_id"] = int(scanner.scan())
+        session["active_student_id"] = int(scan())
         if scan_ids(int(session["active_student_id"])):
             user = db.query(StudentModel).filter_by(usid=session["active_student_id"]).first()
             login_user(user)
@@ -132,7 +131,7 @@ def autoIdRegistration():
         email = request.form['email']
         pin = request.form['pin_code']
         init_amount = request.form['initial_amount']
-        master_key = request.form['master_product_key']
+        master_key = int(request.form['master_product_key'])
         
         if master_key != MASTER_PRODUCT_KEY:
             return render('auto_id_registration.html', 
@@ -184,7 +183,7 @@ def manualIdRegistration():
         email = request.form['email']
         pin = request.form['pin_code']
         init_amount = request.form['initial_amount']
-        master_key = request.form['master_product_key']
+        master_key = int(request.form['master_product_key'])
         
         if master_key != MASTER_PRODUCT_KEY:
             return render('manual_id_registration.html', 
@@ -243,12 +242,12 @@ def payment():
 
     if request.method == 'POST':
         amount_to_pay = request.form['amount_to_pay']
-        master_product_key = int(request.form['master_product_key'])
-        amount = get_student_details(int(session["active_student_id"]), 'amount')
+        student_pin = int(request.form['student_pin'])
+        amount = get_student_details(session["active_student_id"], 'amount')
 
-        if int(MASTER_PRODUCT_KEY) != int(master_product_key):
+        if student_pin != int(get_student_details(session["active_student_id"], 'pin')):
             return render('payment.html',
-                            debit_status='❌Invalid Master Product Key.')
+                            debit_status='❌Invalid Pin Code.')
 
         else:
             if int(amount_to_pay) > int(amount):
@@ -293,9 +292,9 @@ def updateAmount():
 
     if request.method == 'POST':
         amount_to_credit = request.form['amount_to_update']
-        master_product_key = int(request.form['master_product_key'])
+        student_pin = int(request.form['student_pin'])
         
-        if int(MASTER_PRODUCT_KEY) != int(master_product_key):
+        if student_pin != int(get_student_details(session["active_student_id"], 'pin')):
             return render('update_amount.html', 
                         update_status='❌Invalid Master Product Key.')
 
