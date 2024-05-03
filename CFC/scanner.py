@@ -42,7 +42,7 @@ from pyzbar.pyzbar import decode
 #             return jpeg.tobytes()
 
 
-def scan(self):
+def scan():
     cap = cv2.VideoCapture(0)
     data = ''
 
