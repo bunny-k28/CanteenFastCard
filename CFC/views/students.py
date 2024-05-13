@@ -22,7 +22,7 @@ load_dotenv(
             os.path.dirname('.')), 
             'site_settings.env')
 )
-MASTER_PRODUCT_KEY = int(os.environ.get('MASTER_PRODUCT_KEY'))
+MASTER_PROCESS_KEY = int(os.environ.get('MASTER_PROCESS_KEY'))
 PLATFORM = sys.platform
 
 login_manager = LoginManager()
@@ -133,7 +133,7 @@ def autoIdRegistration():
         init_amount = request.form['initial_amount']
         master_key = int(request.form['master_product_key'])
         
-        if master_key != MASTER_PRODUCT_KEY:
+        if master_key != MASTER_PROCESS_KEY:
             return render('auto_id_registration.html', 
                           alert_message='Invalid Master Product Key.')
 
@@ -185,7 +185,7 @@ def manualIdRegistration():
         init_amount = request.form['initial_amount']
         master_key = int(request.form['master_product_key'])
         
-        if master_key != MASTER_PRODUCT_KEY:
+        if master_key != MASTER_PROCESS_KEY:
             return render('manual_id_registration.html', 
                                 alert_message='Invalid Master Product Key.')
 
