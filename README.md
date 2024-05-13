@@ -15,21 +15,38 @@
 
 ## <li>Preparing the Dir</li>
 
-### 1. Before you start running the website or [`website.py`](https://github.com/bunny-k28/CanteenFastCard/blob/master/website.py) file, you've to prepare your dir with some files and folders.
+### 1. Before you start running the website or [`server.py`](https://github.com/bunny-k28/CanteenFastCard/blob/master/server.py) file, you've to prepare your project dir with some files and folders.
 
 ### 2. To do so, you'll find a [`setupEnv.py`](https://github.com/bunny-k28/CanteenFastCard/blob/master/setupEnv.py) file in the directory.
 
-### 3. Open your <b><i>CMD/PowerShell/Terminal</i></b> inside the project directory and type ```py .\setupEnv.py```. After the program is running in your terminal, enter ```dir, libs```
+### 3. Open your <b><i>CMD/PowerShell/Terminal</i></b> inside the project directory and type 
+    • For Win32/64
+         py .\setupEnv.py
+    
+    • For MacOS
+        python3 ./server.py
 
 ### 4. After the program has finished preparing your directory, you have to make some <i><u>modifications</u></i> in the `website_info.env`.
     • Env Vars
-        1. HOST_KEY -> app password of service Email account
-        2. HOST_SSID -> service Email account, for sending emails and 2FA codes
-        3. MASTER_2FA_EMAIL -> a master email address for admin access work (like:- shutting down server, etc)
-        4. MASTER_PRODUCT_KEY -> for registration verification process
-        5. MASTER_PROCESS_KEY -> for transaction verification process
+        1. HOST='0.0.0.0'
+        2. PORT=2024
+        3. DEBUG=True
 
-### 5. After all these operations, your program is ready to run. Just open your <b><i>CMD/PowerShell/Terminal</i></b> inside the project directory and type ```py .\website.py```.
+        4. SMTP_SERVER='smtp.gmail.com'
+        5. SERVER_PORT=465
+
+        6. HOST_KEY -> app password of service Email account
+        7. HOST_SSID -> service Email account, for sending emails and 2FA codes
+
+        8. MASTER_2FA_EMAIL -> a master email address for admin work
+        9. MASTER_PROCESS_KEY -> for registration verification process
+
+### 5. After all these operations, your program is ready to run. Just open your <b><i>CMD/PowerShell/Terminal</i></b> inside the project directory and type
+    • For Win32/64
+         py .\setupEnv.py
+    
+    • For MacOS
+        python3 ./server.py
 ![](CFC/site/static/images/terminal.jpg)
 <br>
 
@@ -76,12 +93,12 @@
 
 ### 1. Payment
 ![](CFC/site/static/images/pay.jpg)
-#### As you can see in the above image, you just have to enter the <b>total amount</b> of the bought item(S) and then the canteen employee will enter the master key as per the verification process. Then click the `Pay Amount` button.
+#### As you can see in the above image, you just have to enter the <b>total amount</b> of the bought item(S) and then the canteen employee will enter the your pin code as per the verification process. Then click the `Pay Amount` button.
 <br>
 
 ### 2. Update
 ![](CFC/site/static/images/update.jpg)
-#### As you can see in the above image, you just have to enter the amount you want to update/deposite into your account and then the canteen employee will enter the master key as per the verification process. Then click the `Update Balance` button.
+#### As you can see in the above image, you just have to enter the amount you want to update/deposite into your account and then the canteen employee will enter the your pin code as per the verification process. Then click the `Update Balance` button.
 <br>
 
 ### 3. Check
