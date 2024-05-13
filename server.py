@@ -14,7 +14,7 @@ load_dotenv(
             'site_settings.env')
 )
 
-PORT = os.environ.get('PORT')
+PORT = int(os.environ.get('PORT'))
 HOST = os.environ.get('HOST')
 DEBUG = os.environ.get('DEBUG')
 
