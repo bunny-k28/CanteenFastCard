@@ -26,7 +26,7 @@
     • For MacOS
         python3 ./server.py
 
-### 4. After the program has finished preparing your directory, you have to make some <i><u>modifications</u></i> in the `website_info.env`.
+### 4. After the program has finished preparing your directory, you have to make some <i><u>modifications</u></i> in the `site_settings.env`.
     • Env Vars
         1. HOST='0.0.0.0'
         2. PORT=<port_number>
