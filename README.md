@@ -24,7 +24,7 @@
          py .\setupEnv.py
     
     • For MacOS
-        python3 ./server.py
+        python3 ./setupEnv.py
 
 ### 4. After the program has finished preparing your directory, you have to make some <i><u>modifications</u></i> in the `site_settings.env`.
     • Env Vars
@@ -42,14 +42,7 @@
         9. MASTER_PROCESS_KEY="<a custom keyfor registration verification process>"
 #### [Follow this link for creating app password](https://myaccount.google.com/apppasswords?)
 
-### 5. After all these operations, your program is ready to run. Just open your <b><i>CMD/PowerShell/Terminal</i></b> inside the project directory and type
-    • For Win32/64
-         py .\setupEnv.py
-
-    • For MacOS
-        python3 ./setupEnv.py
-
-### 6. After running the setup file. You'll be able to run the server file
+### 5. After running the setup file. You'll be able to run the server file
     • For Win32/64
         py .\server.py
 
