@@ -29,17 +29,18 @@
 ### 4. After the program has finished preparing your directory, you have to make some <i><u>modifications</u></i> in the `website_info.env`.
     • Env Vars
         1. HOST='0.0.0.0'
-        2. PORT=2024
-        3. DEBUG=True
+        2. PORT=<port_number>
+        3. DEBUG=<bool>
 
-        4. SMTP_SERVER='smtp.gmail.com'
-        5. SERVER_PORT=465
+        4. SMTP_SERVER='smtp.<smtp_server>.com'
+        5. SERVER_PORT=<smtp_server_port> (Default Port: 465)
 
-        6. HOST_KEY -> app password of service Email account
-        7. HOST_SSID -> service Email account, for sending emails and 2FA codes
+        6. HOST_SSID="<service Email account, for sending emails and 2FA codes>"
+        7. HOST_KEY="<app password of service Email account>"
 
-        8. MASTER_2FA_EMAIL -> a master email address for admin work
-        9. MASTER_PROCESS_KEY -> for registration verification process
+        8. MASTER_EMAIL="<a master/personal email address for admin work>"
+        9. MASTER_PROCESS_KEY="<a custom keyfor registration verification process>"
+#### [Follow this link for creating app password](https://myaccount.google.com/apppasswords?)
 
 ### 5. After all these operations, your program is ready to run. Just open your <b><i>CMD/PowerShell/Terminal</i></b> inside the project directory and type
     • For Win32/64
