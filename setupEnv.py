@@ -1,9 +1,5 @@
 import os
-
-print("\nRunning command `pip install -r requirements.txt` to install all Dependencies and Requirements.\n")
-
-try: os.system("pip install -r requirements.txt")
-except Exception: pass
+import pathlib
 
 try: from dotenv import set_key
 except ImportError: os.system('pip install python-dotenv'); from dotenv import set_key;
@@ -14,8 +10,7 @@ databaseDirFiles = ['cfc_userDatabase.db',
 
 siteEnvKeys = [
     "MASTER_PROCESS_KEY",
-    "MASTER_PRODUCT_KEY",
-    "MASTER_2FA_EMAIL",
+    "MASTER_EMAIL",
     "HOST_SSID",
     "HOST_PSWD",
     "SERVER_PORT",
@@ -25,20 +20,22 @@ siteEnvKeys = [
     "HOST"
 ]
 
-
 # code to make `Database` file in the Root directory
-try: os.mkdir('Database')
+try: os.mkdir('./Database')
 except OSError: pass
 
 # for-loop to create sub-directories in the database directory
 for dir in databaseDirDirs:
-    os.mkdir(f'Database/{dir}')
+    try: os.mkdir(f'Database/{dir}')
+    except OSError: pass
 
 # for-loop to create files in the database directory
 for file in databaseDirFiles:
-    open(f'Database/{file}', 'x').close()
+    try: open(f'Database/{file}', 'x').close()
+    except OSError: pass
 
 # for-loop to create `.env` and setting up the env variables
 open('site_settings.env', 'x').close()
 for key in siteEnvKeys[::-1]:
-    set_key('site_settings.env', key, 'VALUE')
+    try: set_key('site_settings.env', key, 'VALUE')
+    except KeyError: pass
