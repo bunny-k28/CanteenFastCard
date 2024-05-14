@@ -45,9 +45,17 @@
 ### 5. After all these operations, your program is ready to run. Just open your <b><i>CMD/PowerShell/Terminal</i></b> inside the project directory and type
     • For Win32/64
          py .\setupEnv.py
-    
+
+    • For MacOS
+        python3 ./setupEnv.py
+
+### 6. After running the setup file. You'll be able to run the server file
+    • For Win32/64
+        py .\server.py
+
     • For MacOS
         python3 ./server.py
+
 ![](CFC/site/static/images/terminal.jpg)
 <br>
 
